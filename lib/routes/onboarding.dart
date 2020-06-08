@@ -71,7 +71,7 @@ class _OnboardingState extends State<Onboarding> {
                 style: Theme.of(context).textTheme.button,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.pushNamed(context, '/homeservers');
               },
             ),
           ],

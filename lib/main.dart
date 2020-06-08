@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'routes/onboarding.dart';
+import 'routes/homeservers.dart';
 import 'routes/login.dart';
 
 void main() {
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => Onboarding(title: 'Welcome to Staccato'),
+        '/homeservers': (context) => Homeservers(),
         '/login': (context) => Login(),
       },
     );
