@@ -19,4 +19,9 @@ jobs:
         channel: 'stable' # or: 'dev' or 'beta'
     - run: flutter pub get
     - run: flutter test
-    - run: flutter build apk
+      continue-on-error: true
+    - run: flutter build apk --split-per-abi
+    - uses: actions/upload-artifact@v2
+      with:
+        name: winged-staccato
+        path: build/app/outputs/apk/release/*.apk
