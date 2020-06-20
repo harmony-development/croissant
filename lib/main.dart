@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:winged_staccato/staccato_dark.dart';
 
 import 'routes/onboarding.dart';
 import 'routes/homeservers.dart';
@@ -14,15 +16,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = ThemeData.dark().copyWith(
-      primaryColor: Color(0xFF8BCEF2),
-      primaryColorBrightness: Brightness.light,
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-    );
+        backgroundColor: StaccatoDark.background,
+        scaffoldBackgroundColor: StaccatoDark.background,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.dark()
+            .copyWith(primary: Colors.deepPurple, secondary: Colors.pink),
+        brightness: Brightness.dark);
     theme = theme.copyWith(
-      textTheme: GoogleFonts.manropeTextTheme(theme.textTheme),
-      accentTextTheme: GoogleFonts.manropeTextTheme(theme.accentTextTheme),
-      primaryTextTheme: GoogleFonts.manropeTextTheme(theme.primaryTextTheme)
-    );
+        textTheme: GoogleFonts.manropeTextTheme(theme.textTheme),
+        accentTextTheme: GoogleFonts.manropeTextTheme(theme.accentTextTheme),
+        primaryTextTheme: GoogleFonts.manropeTextTheme(theme.primaryTextTheme));
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     return MaterialApp(
       title: 'Flutter Demo',

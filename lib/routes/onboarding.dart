@@ -53,19 +53,13 @@ class _OnboardingState extends State<Onboarding> {
               style: Theme.of(context).textTheme.headline4,
               textAlign: TextAlign.center,
             ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Container(
-                height: 300.0,
-                width: 300.0,
-                decoration: BoxDecoration(
-                  color: Colors.white
-                ),
-              ),
+            Text(
+              'Please select a server',
+              style: Theme.of(context).textTheme.headline5,
+              textAlign: TextAlign.center,
             ),
-            OutlineButton(
+            Container(),
+            RaisedButton(
               child: Text(
                 "Let's Go",
                 style: Theme.of(context).textTheme.button,
@@ -73,6 +67,7 @@ class _OnboardingState extends State<Onboarding> {
               onPressed: () {
                 Navigator.pushNamed(context, '/homeservers');
               },
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ],
         ),
