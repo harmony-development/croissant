@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:winged_staccato/routes/auth/auth.dart';
+import 'package:winged_staccato/routes/auth/registration.dart';
 import 'package:winged_staccato/staccato_dark.dart';
 
-import 'routes/onboarding.dart';
-import 'routes/homeservers.dart';
-import 'routes/login.dart';
+import 'routes/auth/onboarding.dart';
+import 'routes/auth/homeservers.dart';
+import 'routes/auth/login.dart';
+import 'routes/main/main.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,13 +33,16 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Staccato',
       theme: theme,
       initialRoute: '/',
       routes: {
         '/': (context) => Onboarding(title: 'Welcome to Staccato'),
         '/homeservers': (context) => Homeservers(),
+        '/auth': (context) => Auth(),
         '/login': (context) => Login(),
+        '/registration': (context) => Registration(),
+        '/main': (context) => Main(),
       },
     );
   }
