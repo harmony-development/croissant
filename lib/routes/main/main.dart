@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony.dart';
+import 'package:hive/hive.dart';
+import 'package:winged_staccato/routes/hive.dart';
+import 'package:winged_staccato/routes/main/messages.dart';
 
 class MainArguments {
-  final Homeserver server;
+  final Homeserver home;
 
-  MainArguments(this.server);
+  MainArguments(this.home);
 }
 
 class Main extends StatefulWidget {
@@ -15,15 +18,53 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+
+  List<Guild> guilds;
+  Guild selectedGuild;
+  List<Channel> channels;
+  Channel selectedChannel;
+
+  Homeserver home;
+
   @override
   Widget build(BuildContext context) {
-    final MainArguments args = ModalRoute.of(context).settings.arguments;
+    if (home == null) {
+      final MainArguments args = ModalRoute.of(context).settings.arguments;
+      if (args?.home == null) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).backgroundColor,
+            title: Text("Main"),
+          ),
+          body: FutureBuilder(
+            future: loginWithToken(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) => Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false));
+              } else {
+                if (snapshot.hasData) {
+                  Homeserver client = snapshot.data;
+                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) => setState(() => home = client));
+                }
+              }
+              return CircularProgressIndicator();
+            },
+          ),
+        );
+      } else {
+        home = args.home;
+      }
+    }
+
+    final gwidget = queryGuilds();
+    final cwidget = selectedGuild == null ? Container() : queryChannels();
+    final bwidget = buildBody();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(
-            "Main!"
-        ),
+        title: Text("Main!"),
       ),
       drawer: Drawer(
         child: ListView(
