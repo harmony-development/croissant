@@ -37,12 +37,12 @@ class MyApp extends StatelessWidget {
       theme: theme,
       initialRoute: '/',
       routes: {
-        '/': (context) => Onboarding(title: 'Welcome to Staccato'),
+        '/': (context) => Main(),
+        '/onboard': (context) => Onboarding(title: 'Welcome to Staccato'),
         '/homeservers': (context) => Homeservers(),
         '/auth': (context) => Auth(),
         '/login': (context) => Login(),
         '/registration': (context) => Registration(),
-        '/main': (context) => Main(),
       },
     );
   }

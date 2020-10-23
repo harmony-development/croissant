@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony.dart';
+import 'package:hive/hive.dart';
 import 'package:winged_staccato/routes/main/main.dart';
+
+import '../hive.dart';
 
 class RegistrationArguments {
   final Homeserver server;
@@ -83,7 +86,12 @@ class _RegistrationState extends State<Registration> {
                       await args.server.register(
                           usernameController.text, emailController.text,
                           passwordController.text);
-                      Navigator.pushNamedAndRemoveUntil(context, '/main', (r) => false,  arguments: MainArguments(args.server));
+                      if (!Hive.isBoxOpen('box')) {
+                        await HiveUtils.superInit();
+                      }
+                      final cred = Credentials(args.server.host, args.server.session.token, args.server.session.userId);
+                      Hive.box('box').add(cred);
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,  arguments: MainArguments(args.server));
                     } catch(e) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text("Registration: $e"),
