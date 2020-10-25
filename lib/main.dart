@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:winged_staccato/routes/auth/auth.dart';
-import 'package:winged_staccato/routes/auth/registration.dart';
-import 'package:winged_staccato/staccato_dark.dart';
+import 'package:harmony_sdk/harmony.dart';
 
-import 'routes/auth/onboarding.dart';
+import 'routes/auth/auth.dart';
 import 'routes/auth/homeservers.dart';
 import 'routes/auth/login.dart';
+import 'routes/auth/onboarding.dart';
+import 'routes/auth/registration.dart';
 import 'routes/main/main.dart';
+import 'routes/splash.dart';
+import 'staccato_dark.dart';
 
 void main() {
   runApp(MyApp());
+}
+
+class HomeserverArguments {
+  final Homeserver home;
+
+  HomeserverArguments(this.home);
 }
 
 class MyApp extends StatelessWidget {
@@ -37,7 +45,8 @@ class MyApp extends StatelessWidget {
       theme: theme,
       initialRoute: '/',
       routes: {
-        '/': (context) => Main(),
+        '/': (context) => SplashScreen(),
+        '/main': (context) => Main(),
         '/onboard': (context) => Onboarding(title: 'Welcome to Staccato'),
         '/homeservers': (context) => Homeservers(),
         '/auth': (context) => Auth(),
