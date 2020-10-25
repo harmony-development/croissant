@@ -10,28 +10,44 @@ class Homeservers extends StatefulWidget {
 }
 
 class _HomeserversState extends State<Homeservers> {
+  final serverController = TextEditingController(text: "192.168.0.69");
+
   @override
   Widget build(BuildContext context) {
-    List<Homeserver> homeservers = List();
-    homeservers.add(Homeserver("localhost"));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: Text(
-          "Select a homeserver"
+          "Homeserver"
         ),
       ),
-      body: ListView.builder(
-        itemCount: homeservers.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(
-              homeservers[index].host
+      body: Builder(
+          builder: (context) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Enter homeserver address",
+                  style: Theme.of(context).textTheme.headline4,
+                  textAlign: TextAlign.center,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Address',
+                    ),
+                    controller: serverController,
+                  ),
+                ),
+                OutlineButton(
+                  child: Text("Select"),
+                  onPressed: () => Navigator.pushNamed(context, '/auth', arguments: AuthArguments(Homeserver(serverController.text))),
+                )
+              ],
             ),
-            onTap: () => Navigator.pushNamed(context, '/auth', arguments: AuthArguments(homeservers[index])),
-          );
-        },
-      ),
+          )
+      )
     );
   }
 }
