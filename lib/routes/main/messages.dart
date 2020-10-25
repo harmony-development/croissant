@@ -9,12 +9,10 @@ class MessageList extends StatefulWidget {
   final Channel channel;
 
   @override
-  _MessageListState createState() => _MessageListState(channel);
+  _MessageListState createState() => _MessageListState();
 }
 
 class _MessageListState extends State<MessageList> {
-  _MessageListState(this._channel);
-
   final messageController = TextEditingController();
 
   Channel _channel;
@@ -28,7 +26,8 @@ class _MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
-    if (_messages == null) {
+    if (_messages == null || _channel?.id != widget.channel.id) {
+      _channel = widget.channel;
       return FutureBuilder(
           future: _channel.getMessages(null),
           builder: (context, snapshot) {

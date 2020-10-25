@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:harmony_sdk/harmony.dart';
 import 'package:hive/hive.dart';
-import 'package:winged_staccato/routes/main/main.dart';
 
+import '../../main.dart';
 import '../hive.dart';
-
-class LoginArguments {
-  final Homeserver server;
-
-  LoginArguments(this.server);
-}
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -31,7 +24,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final LoginArguments args = ModalRoute.of(context).settings.arguments;
+    final HomeserverArguments args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -45,7 +38,7 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "Log into ${args.server.host}",
+                  "Log into ${args.home.host}",
                   style: Theme.of(context).textTheme.headline4,
                   textAlign: TextAlign.center,
                 ),
@@ -72,13 +65,13 @@ class _LoginState extends State<Login> {
                   child: Text("Login"),
                   onPressed: () async {
                     try {
-                      await args.server.login(emailController.text, passwordController.text);
+                      await args.home.login(emailController.text, passwordController.text);
                       if (!Hive.isBoxOpen('box')) {
                         await HiveUtils.superInit();
                       }
-                      final cred = Credentials(args.server.host, args.server.session.token, args.server.session.userId);
+                      final cred = Credentials(args.home.host, args.home.session.token, args.home.session.userId);
                       Hive.box('box').add(cred);
-                      Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,  arguments: MainArguments(args.server));
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,  arguments: HomeserverArguments(args.home));
                     } catch(e) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text("Login: $e"),

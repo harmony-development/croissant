@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony.dart';
-import 'package:hive/hive.dart';
-import 'package:winged_staccato/routes/hive.dart';
+import 'package:winged_staccato/main.dart';
 import 'package:winged_staccato/routes/main/messages.dart';
-
-class MainArguments {
-  final Homeserver home;
-
-  MainArguments(this.home);
-}
 
 class Main extends StatefulWidget {
   Main({Key key}) : super(key: key);
@@ -29,32 +22,8 @@ class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
     if (home == null) {
-      final MainArguments args = ModalRoute.of(context).settings.arguments;
-      if (args?.home == null) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).backgroundColor,
-            title: Text("Main"),
-          ),
-          body: FutureBuilder(
-            future: loginWithToken(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                WidgetsBinding.instance.addPostFrameCallback((timeStamp) => Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false));
-              } else {
-                if (snapshot.hasData) {
-                  Homeserver client = snapshot.data;
-                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) => setState(() => home = client));
-                }
-              }
-              return CircularProgressIndicator();
-            },
-          ),
-        );
-      } else {
-        home = args.home;
-      }
+      final HomeserverArguments args = ModalRoute.of(context).settings.arguments;
+      home = args.home;
     }
 
     final gwidget = queryGuilds();
@@ -188,17 +157,6 @@ class _MainState extends State<Main> {
                 },
               ));
         });
-  }
-
-  Future<Homeserver> loginWithToken() async {
-    if (!Hive.isBoxOpen('box')) {
-      await HiveUtils.superInit();
-    }
-
-    Credentials cred = Hive.box('box').getAt(0);
-    final session = SSession(cred.token, cred.userId);
-    final client = Homeserver(cred.host)..session = session;
-    return client;
   }
 
 }
