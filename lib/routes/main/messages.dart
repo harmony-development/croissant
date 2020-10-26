@@ -18,6 +18,7 @@ class _MessageListState extends State<MessageList> {
   Channel _channel;
   List<MMessage> _messages;
   StreamSubscription<GGuildEvent> _sub;
+  StreamSubscription<GGuildEvent> _cancelingSub;
 
   @override void dispose() {
     _sub.cancel();
@@ -28,6 +29,7 @@ class _MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     if (_messages == null || _channel?.id != widget.channel.id) {
       _channel = widget.channel;
+      resetEventSubscription();
       return FutureBuilder(
           future: _channel.getMessages(null),
           builder: (context, snapshot) {
@@ -38,18 +40,6 @@ class _MessageListState extends State<MessageList> {
               print(snapshot.error);
             }
             return CircularProgressIndicator();
-      });
-    }
-    if (_sub == null) {
-      _sub = _channel.streamGuildEvents().listen((event) {
-        if (event is MMessageSent) {
-          if (event.message.channelId == _channel.id) {
-            setState(() {
-              _messages = new List.from(_messages)
-                ..insert(0, event.message);
-            });
-          }
-        }
       });
     }
     return Column(
@@ -92,6 +82,23 @@ class _MessageListState extends State<MessageList> {
         )
       ],
     );
+  }
+
+  void resetEventSubscription() {
+    if(_sub != null) {
+      _cancelingSub = _sub;
+      _cancelingSub.cancel().then((value) => _cancelingSub = null);
+    }
+    _sub = _channel.streamGuildEvents().listen((event) {
+      if (event is MMessageSent) {
+        if (event.message.channelId == _channel.id) {
+          setState(() {
+            _messages = new List.from(_messages)
+              ..insert(0, event.message);
+          });
+        }
+      }
+    });
   }
 
 }
