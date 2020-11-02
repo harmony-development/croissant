@@ -30,17 +30,8 @@ class _MessageListState extends State<MessageList> {
     if (_messages == null || _channel?.id != widget.channel.id) {
       _channel = widget.channel;
       resetEventSubscription();
-      return FutureBuilder(
-          future: _channel.getMessages(null),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && !snapshot.hasError) {
-              _messages = snapshot.data;
-            }
-            if (snapshot.hasError) {
-              print(snapshot.error);
-            }
-            return CircularProgressIndicator();
-      });
+      queryMessageList(); // async query message list after build
+      return CircularProgressIndicator();
     }
     return Column(
       children: [
@@ -87,7 +78,7 @@ class _MessageListState extends State<MessageList> {
   void resetEventSubscription() {
     if(_sub != null) {
       _cancelingSub = _sub;
-      _cancelingSub.cancel().then((value) => _cancelingSub = null);
+      _cancelingSub.cancel().then((_) => _cancelingSub = null);
     }
     _sub = _channel.streamGuildEvents().listen((event) {
       if (event is MMessageSent) {
@@ -99,6 +90,12 @@ class _MessageListState extends State<MessageList> {
         }
       }
     });
+  }
+
+  Future<void> queryMessageList() {
+    return widget.channel.getMessages(null).then((value) => setState(() {
+      _messages = value;
+    }));
   }
 
 }
