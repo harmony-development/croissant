@@ -32,11 +32,18 @@ class _MainWidgetState extends State<Main> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: Text(state.selectedChannel == null ? "Main!" : state.selectedChannel.name),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.people_rounded),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
           ),
         ],
       ),
       drawer: ChonkyDrawer(_home),
+      endDrawer: state.selectedChannel == null ? null : MembersDrawer(),
       body: state.selectedChannel == null ? placeholder() : MessageList(state.selectedChannel),
     );
   }
