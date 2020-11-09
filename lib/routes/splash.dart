@@ -32,7 +32,7 @@ class SplashScreen extends StatelessWidget {
       }
 
       Credentials cred = Hive.box('box').getAt(0);
-      final session = SSession(cred.token, cred.userId);
+      final session = Session(cred.token, cred.userId);
       final home = Homeserver(cred.host)..session = session;
       Navigator.pushNamedAndRemoveUntil(context, '/main', (r) => false, arguments: HomeserverArguments(home));
     } catch(e) {

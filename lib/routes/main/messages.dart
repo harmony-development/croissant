@@ -16,9 +16,9 @@ class _MessageListState extends State<MessageList> {
   final messageController = TextEditingController();
 
   Channel _channel;
-  List<MMessage> _messages;
-  StreamSubscription<GGuildEvent> _sub;
-  StreamSubscription<GGuildEvent> _cancelingSub;
+  List<Message> _messages;
+  StreamSubscription<GuildEvent> _sub;
+  StreamSubscription<GuildEvent> _cancelingSub;
 
   @override void dispose() {
     _sub.cancel();
@@ -41,7 +41,7 @@ class _MessageListState extends State<MessageList> {
                 reverse: true,
                 itemCount: _messages == null ? 0 : _messages.length,
                 itemBuilder: (BuildContext context, int index) {
-                  MMessage m = _messages[index];
+                  Message m = _messages[index];
                   return ListTile(
                     title: Text(m.content),
                     onTap: () {},
@@ -81,7 +81,7 @@ class _MessageListState extends State<MessageList> {
       _cancelingSub.cancel().then((_) => _cancelingSub = null);
     }
     _sub = _channel.streamGuildEvents().listen((event) {
-      if (event is MMessageSent) {
+      if (event is MessageSent) {
         if (event.message.channelId == _channel.id) {
           setState(() {
             _messages = new List.from(_messages)
