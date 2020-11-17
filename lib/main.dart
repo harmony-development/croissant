@@ -1,14 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:winged_staccato/staccato_dark.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
+import 'package:provider/provider.dart';
 
-import 'routes/onboarding.dart';
-import 'routes/homeservers.dart';
-import 'routes/login.dart';
+import 'routes/auth/auth.dart';
+import 'routes/auth/homeservers.dart';
+import 'routes/auth/login.dart';
+import 'routes/auth/onboarding.dart';
+import 'routes/auth/registration.dart';
+import 'routes/main/main.dart';
+import 'routes/main/state.dart';
+import 'routes/splash.dart';
+import 'staccato_dark.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => MainState(),
+      child: MyApp(),
+    ),
+  );
+}
+
+class HomeserverArguments {
+  final Homeserver home;
+
+  HomeserverArguments(this.home);
 }
 
 class MyApp extends StatelessWidget {
@@ -30,13 +48,17 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Staccato',
       theme: theme,
       initialRoute: '/',
       routes: {
-        '/': (context) => Onboarding(title: 'Welcome to Staccato'),
+        '/': (context) => SplashScreen(),
+        '/main': (context) => Main(),
+        '/onboard': (context) => Onboarding(title: 'Welcome to Staccato'),
         '/homeservers': (context) => Homeservers(),
+        '/auth': (context) => Auth(),
         '/login': (context) => Login(),
+        '/registration': (context) => Registration(),
       },
     );
   }
