@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
 
 import 'state.dart';
 
 class MembersDrawer extends StatefulWidget {
-
   @override
   _MembersState createState() => _MembersState();
-
 }
 
 class _MembersState extends State<MembersDrawer> {
-
   List<User> _members;
 
   @override

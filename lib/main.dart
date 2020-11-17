@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
 
 import 'routes/auth/auth.dart';

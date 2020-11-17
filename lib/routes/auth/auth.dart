@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:winged_staccato/main.dart';
 import 'package:winged_staccato/routes/auth/registration.dart';
 

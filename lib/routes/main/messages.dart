@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 
 class MessageList extends StatefulWidget {
   MessageList(this.channel);

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 
 class MainState extends ChangeNotifier {
   List<Guild> _guilds;

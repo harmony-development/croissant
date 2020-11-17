@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:harmony_sdk/harmony.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:hive/hive.dart';
 
 import '../../main.dart';
