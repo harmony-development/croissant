@@ -9,14 +9,11 @@ import 'members.dart';
 import 'messages.dart';
 
 class Main extends StatefulWidget {
-  Main({Key key}) : super(key: key);
-
   @override
   _MainWidgetState createState() => _MainWidgetState();
 }
 
 class _MainWidgetState extends State<Main> {
-
   Homeserver _home;
 
   @override
@@ -43,23 +40,38 @@ class _MainWidgetState extends State<Main> {
         ],
       ),
       drawer: ChonkyDrawer(_home),
+      drawerEnableOpenDragGesture: false,
       endDrawer: state.selectedChannel == null ? null : MembersDrawer(),
-      body: state.selectedChannel == null ? placeholder() : MessageList(state.selectedChannel),
+      endDrawerEnableOpenDragGesture: false,
+      body: Builder(
+        builder: (builderContext) => GestureDetector(
+          onHorizontalDragEnd: (DragEndDetails details) {
+            if (details.primaryVelocity > 0) {
+              Scaffold.of(builderContext).openDrawer();
+            } else if (details.primaryVelocity < 0 && state.selectedChannel != null) {
+              Scaffold.of(builderContext).openEndDrawer();
+            }
+          },
+          child: state.selectedChannel == null ? placeholder() :
+          MessageList(state.selectedChannel),
+
+        ),
+      ),
     );
   }
 
   Widget placeholder() {
     return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome to the club, buddy!',
-              style: Theme.of(context).textTheme.headline4,
-              textAlign: TextAlign.center,
-            )
-          ],
-        )
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Welcome to the club, buddy!',
+            style: Theme.of(context).textTheme.headline4,
+            textAlign: TextAlign.center,
+          )
+        ],
+      )
     );
   }
 
