@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
+import 'package:winged_staccato/routes/main/message_item.dart';
 
 class MessageList extends StatefulWidget {
   MessageList(this.channel);
@@ -33,31 +34,41 @@ class _MessageListState extends State<MessageList> {
       queryMessageList(); // async query message list after build
       return CircularProgressIndicator();
     }
+
     return Column(
       children: [
         Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                reverse: true,
-                itemCount: _messages == null ? 0 : _messages.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Message m = _messages[index];
-                  return ListTile(
-                    title: Text(m.content),
+          child: ListView.builder(
+            reverse: true,
+            itemCount: _messages == null ? 0 : _messages.length,
+            itemBuilder: (BuildContext context, int index) {
+              Message message = _messages[index];
+              if (index + 1 < _messages.length) {
+                Message prevMessage = _messages[index + 1];
+                if (prevMessage.author.id == message.author.id) {
+                  return InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 72),
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Text(message.content, style: TextStyle(color: Colors.white70),),
+                    ),
                     onTap: () {},
                   );
-                })
+                }
+              }
+              return MessageItem(message);
+            })
         ),
         Row(
           children: [
             Expanded(child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Message',
-                  ),
-                  controller: messageController,
-                ))),
+              padding: EdgeInsets.all(16.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Message',
+                ),
+                controller: messageController,
+              ))),
             IconButton(
               icon: Icon(Icons.send, color: Colors.white, size: 30.0),
               onPressed: () async {
