@@ -12,8 +12,6 @@ class RegistrationArguments {
 }
 
 class Registration extends StatefulWidget {
-  Registration({Key key}) : super(key: key);
-
   @override
   _RegistrationState createState() => _RegistrationState();
 }

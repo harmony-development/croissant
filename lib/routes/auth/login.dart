@@ -5,8 +5,6 @@ import '../../main.dart';
 import '../hive.dart';
 
 class Login extends StatefulWidget {
-  Login({Key key}) : super(key: key);
-
   @override
   _LoginState createState() => _LoginState();
 }

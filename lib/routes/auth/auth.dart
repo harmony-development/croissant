@@ -10,8 +10,6 @@ class AuthArguments {
 }
 
 class Auth extends StatelessWidget {
-  Auth({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final AuthArguments args = ModalRoute.of(context).settings.arguments;

@@ -3,8 +3,6 @@ import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:winged_staccato/routes/auth/auth.dart';
 
 class Homeservers extends StatefulWidget {
-  Homeservers({Key key}) : super(key: key);
-
   @override
   _HomeserversState createState() => _HomeserversState();
 }
