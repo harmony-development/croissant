@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
 
 import 'routes/auth/auth.dart';
 import 'routes/auth/homeservers.dart';
-import 'routes/auth/login.dart';
 import 'routes/auth/onboarding.dart';
-import 'routes/auth/registration.dart';
 import 'routes/main/main.dart';
 import 'routes/main/state.dart';
 import 'routes/splash.dart';
@@ -21,12 +18,6 @@ void main() {
       child: MyApp(),
     ),
   );
-}
-
-class HomeserverArguments {
-  final Homeserver home;
-
-  HomeserverArguments(this.home);
 }
 
 class MyApp extends StatelessWidget {
@@ -57,8 +48,6 @@ class MyApp extends StatelessWidget {
         '/onboard': (context) => Onboarding(title: 'Welcome to Staccato'),
         '/homeservers': (context) => Homeservers(),
         '/auth': (context) => Auth(),
-        '/login': (context) => Login(),
-        '/registration': (context) => Registration(),
       },
     );
   }

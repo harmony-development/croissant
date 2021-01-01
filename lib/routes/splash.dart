@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:hive/hive.dart';
-import 'package:winged_staccato/main.dart';
 
 import 'hive.dart';
+import 'main/main.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key key}) : super(key: key);
@@ -34,7 +34,9 @@ class SplashScreen extends StatelessWidget {
       Credentials cred = Hive.box('box').getAt(0);
       final session = Session(cred.token, cred.userId);
       final home = Homeserver(cred.host)..session = session;
-      Navigator.pushNamedAndRemoveUntil(context, '/main', (r) => false, arguments: HomeserverArguments(home));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+        builder: (context) => Main(home: home,),
+      ), (r) => false);
     } catch(e) {
       print(e);
       Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
