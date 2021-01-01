@@ -11,6 +11,8 @@ class MainState extends ChangeNotifier {
   Channel _selectedChannel;
   Channel get selectedChannel => _selectedChannel;
 
+  Guild get selectedGuild => _guilds.firstWhere((element) => element.id == _selectedChannel.guildId);
+
   Future<void> updateGuilds(Homeserver home) => home.joinedGuilds().then((value) {
     _guilds = value;
     notifyListeners();

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
@@ -91,16 +92,20 @@ class _MessageListState extends State<MessageList> {
       _cancelingSub = _sub;
       _cancelingSub.cancel().then((_) => _cancelingSub = null);
     }
-    _sub = _channel.streamGuildEvents().listen((event) {
-      if (event is MessageSent) {
-        if (event.message.channelId == _channel.id) {
-          setState(() {
-            _messages = new List.from(_messages)
-              ..insert(0, event.message);
-          });
+    try {
+      _sub = _channel.streamGuildEvents().listen((event) {
+        if (event is MessageSent) {
+          if (event.message.channelId == _channel.id) {
+            setState(() {
+              _messages = new List.from(_messages)
+                ..insert(0, event.message);
+            });
+          }
         }
-      }
-    });
+      });
+    } catch(e) {
+      log(e);
+    }
   }
 
   Future<void> queryMessageList() {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
-import 'package:winged_staccato/main.dart';
 
 import 'state.dart';
 import 'drawer.dart';
@@ -9,20 +8,19 @@ import 'members.dart';
 import 'messages.dart';
 
 class Main extends StatefulWidget {
+
+  final Homeserver home;
+
+  Main({Key key, @required this.home}) : super(key: key);
+
   @override
   _MainWidgetState createState() => _MainWidgetState();
 }
 
 class _MainWidgetState extends State<Main> {
-  Homeserver _home;
 
   @override
   Widget build(BuildContext context) {
-    if (_home == null) {
-      final HomeserverArguments args = ModalRoute.of(context).settings.arguments;
-      _home = args.home;
-    }
-
     final state = Provider.of<MainState>(context);
 
     return Scaffold(
@@ -39,7 +37,7 @@ class _MainWidgetState extends State<Main> {
           ),
         ],
       ),
-      drawer: ChonkyDrawer(_home),
+      drawer: ChonkyDrawer(widget.home),
       drawerEnableOpenDragGesture: false,
       endDrawer: state.selectedChannel == null ? null : MembersDrawer(),
       endDrawerEnableOpenDragGesture: false,
