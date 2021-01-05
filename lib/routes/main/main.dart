@@ -3,8 +3,8 @@ import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
 
 import 'state.dart';
-import 'drawer.dart';
-import 'members.dart';
+import 'guilds_drawer.dart';
+import 'members_drawer.dart';
 import 'messages.dart';
 
 class Main extends StatefulWidget {
@@ -37,7 +37,7 @@ class _MainWidgetState extends State<Main> {
           ),
         ],
       ),
-      drawer: ChonkyDrawer(widget.home),
+      drawer: GuildsDrawer(widget.home),
       drawerEnableOpenDragGesture: false,
       endDrawer: state.selectedChannel == null ? null : MembersDrawer(),
       endDrawerEnableOpenDragGesture: false,

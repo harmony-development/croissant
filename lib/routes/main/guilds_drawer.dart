@@ -8,8 +8,8 @@ import 'package:winged_staccato/routes/main/invite_dialog.dart';
 import '../utils.dart';
 import 'state.dart';
 
-class ChonkyDrawer extends StatelessWidget {
-  ChonkyDrawer(this.home);
+class GuildsDrawer extends StatelessWidget {
+  GuildsDrawer(this.home);
 
   final Homeserver home;
 
