@@ -22,19 +22,13 @@ class _MemberItemState extends State<MemberItem> {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
-    User member = state.selectedGuild.members[widget.index];
+    User member = state.selectedGuildMembers[widget.index];
 
-    if (_memberId != member.id) {
+    if (_memberId != member.id)
       loadMemberInfo(state);
-      return ListTile(
-        leading: CircleAvatar(backgroundColor: Colors.grey,),
-        title: Text(member.id.toString()),
-        onTap: () {},
-      );
-    }
 
     Widget avatarWidget;
-    if (member.avatar.isEmpty)
+    if (member.avatar == null || member.avatar.isEmpty)
       avatarWidget = CircleAvatar(backgroundColor: Colors.grey,);
     else {
       String avatarUrl = Utils.buildAvatarUrl(member.home, member.avatar);
@@ -44,9 +38,12 @@ class _MemberItemState extends State<MemberItem> {
       );
     }
 
+    String name = member.name == null ? member.id.toString() : member.name;
     List<Widget> title = [];
-    title.add(Text(member.name));
-    if (member.isBot) {
+    title.add(Text(name));
+
+    bool isBot = member.isBot == null ? false : member.isBot;
+    if (isBot) {
       title.add(SizedBox(width: 5));
       title.add(Flexible(
         child: DecoratedBox(
@@ -68,10 +65,10 @@ class _MemberItemState extends State<MemberItem> {
   }
 
   Future<void> loadMemberInfo(MainState state) async {
-    await state.selectedGuild.members[widget.index].refresh();
+    await state.selectedGuildMembers[widget.index].refresh();
 
     setState(() {
-      _memberId = state.selectedGuild.members[widget.index].id;
+      _memberId = state.selectedGuildMembers[widget.index].id;
     });
   }
 

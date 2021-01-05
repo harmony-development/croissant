@@ -11,15 +11,25 @@ class MainState extends ChangeNotifier {
   Channel _selectedChannel;
   Channel get selectedChannel => _selectedChannel;
 
-  Guild get selectedGuild => _guilds.firstWhere((element) => element.id == _selectedChannel.guild);
+  Guild get selectedGuild => _guilds.firstWhere((guild) => guild.id == _selectedChannel.guild);
+  int get selectedGuildIndex => _guilds.indexWhere((guild) => guild.id == _selectedChannel.guild);
+
+  List<User> _selectedGuildMembers;
+  List<User> get selectedGuildMembers => _selectedGuildMembers;
 
   Future<void> updateGuilds(Homeserver home) => home.joinedGuilds().then((value) {
     _guilds = value;
     notifyListeners();
   });
+
   Future<void> updateChannels(int index) => _guilds[index].listChannels().then((value) {
     _channels = value;
     _selectedChannel = value[0];
+    notifyListeners();
+  });
+
+  Future<void> updateMembers(int index) => _guilds[index].listMembers().then((value) {
+    _selectedGuildMembers = value;
     notifyListeners();
   });
 
@@ -27,4 +37,5 @@ class MainState extends ChangeNotifier {
     _selectedChannel = _channels[index];
     notifyListeners();
   }
+
 }

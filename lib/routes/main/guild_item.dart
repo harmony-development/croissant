@@ -49,8 +49,8 @@ class _GuildItemState extends State<GuildItem> {
         child: avatarWidget,
         onClick: () async {
           if (!_isSelected(state)) {
-            await Provider.of<MainState>(context, listen: false)
-                .updateChannels(widget.index);
+            await state.updateChannels(widget.index);
+            await state.updateMembers(widget.index);
           }
         },
       ));

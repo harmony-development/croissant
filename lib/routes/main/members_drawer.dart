@@ -22,16 +22,7 @@ class _MembersState extends State<MembersDrawer> {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
-    Guild guild = state.selectedGuild;
-
-    if (guild.members == null) {
-      guild.refresh();
-      return Drawer(
-        child: Center(
-          child: CircularProgressIndicator()
-        )
-      );
-    }
+    List<User> members = state.selectedGuildMembers;
 
     return Drawer(
       child: ListView(
@@ -47,7 +38,7 @@ class _MembersState extends State<MembersDrawer> {
           ),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: guild.members == null ? 0 : guild.members.length,
+            itemCount: members == null ? 0 : members.length,
             itemBuilder: (BuildContext context, int index) {
               return MemberItem(index);
             }
