@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
 
@@ -17,44 +18,71 @@ class Main extends StatefulWidget {
   _MainWidgetState createState() => _MainWidgetState();
 }
 
-class _MainWidgetState extends State<Main> {
+class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
+
+  Widget _guildsDrawer;
+  Widget _membersDrawer;
+
+  @override
+  void initState() {
+    _guildsDrawer = GuildsDrawer(widget.home);
+    _membersDrawer = MembersDrawer();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(state.selectedChannel == null ? "Main!" : state.selectedChannel.name),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.people_rounded),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            ),
-          ),
-        ],
-      ),
-      drawer: GuildsDrawer(widget.home),
-      drawerEnableOpenDragGesture: false,
-      endDrawer: state.selectedChannel == null ? null : MembersDrawer(),
-      endDrawerEnableOpenDragGesture: false,
-      body: Builder(
-        builder: (builderContext) => GestureDetector(
-          onHorizontalDragEnd: (DragEndDetails details) {
-            if (details.primaryVelocity > 0) {
-              Scaffold.of(builderContext).openDrawer();
-            } else if (details.primaryVelocity < 0 && state.selectedChannel != null) {
-              Scaffold.of(builderContext).openEndDrawer();
-            }
-          },
-          child: state.selectedChannel == null ? placeholder() :
-          MessageList(state.selectedChannel),
+    return InnerDrawer(
+      key: _innerDrawerKey,
+      onTapClose: true, // default false
+      swipe: true, // default true
+      swipeChild: true,
 
+      // colorTransitionChild: Colors.black54,
+      colorTransitionScaffold: Colors.black54, // default Color.black54
+
+      offset: IDOffset.only(right: 0.8, left: 0.8),
+
+      proportionalChildArea : true, // default true
+      borderRadius: 20, // default 0
+
+      leftChild: _guildsDrawer,
+      rightChild: state.selectedChannel == null ? Container() : _membersDrawer,
+      scaffold: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Theme.of(context).backgroundColor,
+          title: Text(state.selectedChannel == null ? "Main!" : state.selectedChannel.name),
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.people_rounded),
+                onPressed: () => _toggle(),
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              ),
+            ),
+          ],
         ),
-      ),
+        body: Builder(
+          builder: (builderContext) => state.selectedChannel == null ? placeholder() :
+          MessageList(state.selectedChannel),
+        ),
+      )
+    );
+  }
+
+  //  Current State of InnerDrawerState
+  final GlobalKey<InnerDrawerState> _innerDrawerKey = GlobalKey<InnerDrawerState>();
+
+  void _toggle()
+  {
+    _innerDrawerKey.currentState.toggle(
+      // direction is optional
+      // if not set, the last direction will be used
+      //InnerDrawerDirection.start OR InnerDrawerDirection.end
+      direction: InnerDrawerDirection.end
     );
   }
 
