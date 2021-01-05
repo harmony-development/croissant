@@ -17,20 +17,14 @@ class MemberItem extends StatefulWidget {
 
 class _MemberItemState extends State<MemberItem> {
 
-  int _refreshCount;
-
-  @override
-  void initState() {
-    super.initState();
-    _refreshCount = 0;
-  }
+  int _memberId;
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
     User member = state.selectedGuild.members[widget.index];
 
-    if (member.name == null || member.avatar == null) {
+    if (_memberId != member.id) {
       loadMemberInfo(state);
       return ListTile(
         leading: CircleAvatar(backgroundColor: Colors.grey,),
@@ -77,7 +71,7 @@ class _MemberItemState extends State<MemberItem> {
     await state.selectedGuild.members[widget.index].refresh();
 
     setState(() {
-      _refreshCount += 1;
+      _memberId = state.selectedGuild.members[widget.index].id;
     });
   }
 

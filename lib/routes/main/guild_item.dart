@@ -16,13 +16,7 @@ class GuildItem extends StatefulWidget {
 }
 
 class _GuildItemState extends State<GuildItem> {
-  int _refreshCount;
-
-  @override
-  void initState() {
-    super.initState();
-    _refreshCount = 0;
-  }
+  int _guildId;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +24,7 @@ class _GuildItemState extends State<GuildItem> {
     Guild guild = state.guilds[widget.index];
     String avatar = guild.avatar;
 
-    if (avatar == null) {
+    if (_guildId != guild.id) {
       loadGuildInfo(state);
       return Ink(
         height: 64,
@@ -74,7 +68,7 @@ class _GuildItemState extends State<GuildItem> {
   Future<void> loadGuildInfo(MainState state) async {
     await state.guilds[widget.index].refresh();
     setState(() {
-      _refreshCount += 1;
+      _guildId = state.guilds[widget.index].id;
     });
   }
 }
