@@ -9,7 +9,10 @@ class CircleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: child,
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: child,
+      ),
       onTap: onClick,
     );
   }

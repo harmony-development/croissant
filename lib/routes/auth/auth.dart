@@ -41,7 +41,7 @@ class _AuthState extends State<Auth> {
   Future<void> initAuth() async {
     final String authId = await widget.home.beginAuth();
     try {
-      var sub = widget.home.streamSteps(authId).listen((event) {
+      StreamSubscription<sdk.AuthStep> sub = widget.home.streamSteps(authId).listen((event) {
         setState(() => _step = event);
       });
       sdk.AuthStep step = await widget.home.getFirstStep(authId);
