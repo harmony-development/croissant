@@ -24,18 +24,11 @@ class _GuildItemState extends State<GuildItem> {
     Guild guild = state.guilds[widget.index];
     String avatar = guild.avatar;
 
-    if (_guildId != guild.id) {
+    if (_guildId != guild.id)
       loadGuildInfo(state);
-      return Ink(
-        height: 64,
-        child: CircleButton(
-          child: CircleAvatar(backgroundColor: Colors.grey,),
-        )
-      );
-    }
 
     Widget avatarWidget;
-    if (avatar.isEmpty)
+    if (avatar == null || avatar.isEmpty)
       avatarWidget = CircleAvatar(
         backgroundColor: Colors.grey,
       );
