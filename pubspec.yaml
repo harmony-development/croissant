@@ -27,6 +27,7 @@ dependencies:
   google_fonts: ^1.1.0
   harmony_sdk: ^0.0.5
   protobuf: ^1.0.1
+  tuple: ^1.0.3
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:winged_staccato/routes/main/message_item.dart';
@@ -20,10 +21,11 @@ class _MessageListState extends State<MessageList> {
   Channel _channel;
   List<Message> _messages;
   StreamSubscription<GuildEvent> _sub;
-  StreamSubscription<GuildEvent> _cancelingSub;
+  StreamController _controller;
 
   @override void dispose() {
     _sub.cancel();
+    _controller.close();
     super.dispose();
   }
 
@@ -46,7 +48,11 @@ class _MessageListState extends State<MessageList> {
               Message message = _messages[index];
               if (index + 1 < _messages.length) {
                 Message prevMessage = _messages[index + 1];
-                if (prevMessage.author.id == message.author.id) {
+                bool isSameAuthor = prevMessage.author.id == message.author.id;
+                bool isSameOverrideName = prevMessage.override?.name == message.override?.name;
+                bool isSameOverrideAvatar = prevMessage.override?.avatar == message.override?.avatar;
+                bool isTotallySamePerson = isSameAuthor && isSameOverrideName && isSameOverrideAvatar;
+                if (isTotallySamePerson) {
                   return InkWell(
                     child: Container(
                       margin: EdgeInsets.only(left: 72),
@@ -57,7 +63,7 @@ class _MessageListState extends State<MessageList> {
                   );
                 }
               }
-              return MessageItem(message);
+              return new MessageItem(message);
             })
         ),
         Row(
@@ -87,24 +93,26 @@ class _MessageListState extends State<MessageList> {
     );
   }
 
-  void resetEventSubscription() {
-    if(_sub != null) {
-      _cancelingSub = _sub;
-      _cancelingSub.cancel().then((_) => _cancelingSub = null);
-    }
+  Future<void> resetEventSubscription() async {
     try {
-      _sub = _channel.streamGuildEvents().listen((event) {
+      await _sub?.cancel();
+      await _controller?.close();
+      Tuple2 tuple = _channel.streamGuildEvents();
+      _controller = tuple.item2;
+      _sub = tuple.item1.listen((event) {
+        log(event.toString());
         if (event is MessageSent) {
-          if (event.message.channelId == _channel.id) {
+          if (event.message.channel == _channel.id) {
             setState(() {
               _messages = new List.from(_messages)
                 ..insert(0, event.message);
             });
           }
         }
-      });
+      }, onError: (e) => log(e.toString()), onDone: () => log('Done'));
+      log('Test!');
     } catch(e) {
-      log(e);
+      log(e.toString());
     }
   }
 
