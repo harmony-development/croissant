@@ -11,19 +11,28 @@ class MembersDrawer extends StatefulWidget {
 }
 
 class _MembersState extends State<MembersDrawer> {
-  List<User> _members;
+  int _refreshCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshCount = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
-    if (_members == null) {
-      getMembers(state.selectedChannel);
+    Guild guild = state.selectedGuild;
+
+    if (guild.members == null) {
+      guild.refresh();
       return Drawer(
         child: Center(
           child: CircularProgressIndicator()
         )
       );
     }
+
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -36,23 +45,23 @@ class _MembersState extends State<MembersDrawer> {
               ),
             ),
           ),
-          buildMemberList(),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: guild.members == null ? 0 : guild.members.length,
+            itemBuilder: (BuildContext context, int index) {
+              return MemberItem(index);
+            }
+          ),
         ],
       ),
     );
   }
 
-  Widget buildMemberList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: _members == null ? 0 : _members.length,
-      itemBuilder: (BuildContext context, int index) {
-        User m = _members[index];
-        return MemberItem(m);
-      });
+  Future<void> getMembers(Guild guild) async {
+    await guild.refresh();
+    setState(() {
+      _refreshCount += 1;
+    });
   }
-
-  Future<void> getMembers(Channel channel) => channel.listMembers().then((value) =>
-    setState(() { _members = value; }));
 
 }
