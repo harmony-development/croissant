@@ -55,11 +55,17 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).backgroundColor,
           title: Text(state.selectedChannel == null ? "Main!" : state.selectedChannel.name),
+          leading: GestureDetector(
+            onTap: () { _toggleGuilds(); },
+            child: Icon(
+              Icons.menu,  // add custom icons also
+            ),
+          ),
           actions: [
             Builder(
               builder: (context) => IconButton(
                 icon: Icon(Icons.people_rounded),
-                onPressed: () => _toggle(),
+                onPressed: () => _toggleMembers(),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               ),
             ),
@@ -76,12 +82,16 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
   //  Current State of InnerDrawerState
   final GlobalKey<InnerDrawerState> _innerDrawerKey = GlobalKey<InnerDrawerState>();
 
-  void _toggle()
+  void _toggleGuilds()
   {
     _innerDrawerKey.currentState.toggle(
-      // direction is optional
-      // if not set, the last direction will be used
-      //InnerDrawerDirection.start OR InnerDrawerDirection.end
+        direction: InnerDrawerDirection.start
+    );
+  }
+
+  void _toggleMembers()
+  {
+    _innerDrawerKey.currentState.toggle(
       direction: InnerDrawerDirection.end
     );
   }
