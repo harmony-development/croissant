@@ -105,8 +105,13 @@ class _AuthState extends State<Auth> {
     if (!Hive.isBoxOpen('box')) {
       await HiveUtils.superInit();
     }
+    final box = Hive.box('box');
+    if (box.isNotEmpty) {
+      await box.clear();
+    }
     final cred = Credentials(widget.home.host, session.token, session.userId);
-    Hive.box('box').add(cred);
+    await box.add(cred);
+    widget.home.session = session;
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
       builder: (context) => Main(home: widget.home,),
     ), (r) => false);

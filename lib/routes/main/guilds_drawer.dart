@@ -5,7 +5,6 @@ import 'package:winged_staccato/routes/main/circle_button.dart';
 import 'package:winged_staccato/routes/main/guild_item.dart';
 import 'package:winged_staccato/routes/main/invite_dialog.dart';
 
-import '../utils.dart';
 import 'state.dart';
 
 class GuildsDrawer extends StatelessWidget {
