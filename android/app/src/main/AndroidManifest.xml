@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="winged_staccato"
+        android:label="Croissant"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

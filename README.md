@@ -1,4 +1,4 @@
-![logo](res/logo.png)
+![logo](assets/logo512.png)
 
 # Croissant
 

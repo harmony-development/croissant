@@ -20,6 +20,7 @@ dependencies:
   flutter_inner_drawer: ^0.5.7+2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.8.1
   hive_generator: ^0.8.2
   build_runner: ^1.10.11
   flutter_test:
@@ -27,3 +28,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
