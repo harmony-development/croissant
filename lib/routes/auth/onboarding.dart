@@ -12,20 +12,22 @@ class Onboarding extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image(image: AssetImage('assets/logo128.png')),
+            SizedBox(height: 20,),
             Text(
-              'Welcome to Staccato',
+              'Welcome to Croissant',
               style: Theme.of(context).textTheme.headline4,
               textAlign: TextAlign.center,
             ),
             Text(
-              'Please select a server',
+              'Please select a homeserver',
               style: Theme.of(context).textTheme.headline5,
               textAlign: TextAlign.center,
             ),
             Container(),
             RaisedButton(
               child: Text(
-                "Let's Go",
+                "Yum",
                 style: Theme.of(context).textTheme.button,
               ),
               onPressed: () {
