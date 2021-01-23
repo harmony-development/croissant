@@ -30,7 +30,7 @@ class _HomeserversState extends State<Homeservers> {
                 textAlign: TextAlign.center,
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Address',

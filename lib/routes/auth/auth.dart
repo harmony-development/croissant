@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
@@ -51,7 +50,7 @@ class _AuthState extends State<Auth> {
         _step = step;
       });
     } catch (e) {
-      log(e);
+      print(e);
     }
   }
 
