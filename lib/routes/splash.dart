@@ -34,11 +34,16 @@ class SplashScreen extends StatelessWidget {
       Credentials cred = Hive.box('box').getAt(0);
       final session = Session(cred.token, cred.userId);
       final home = Homeserver(cred.host)..session = session;
+      await home.joinedGuilds();
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
         builder: (context) => Main(home: home,),
       ), (r) => false);
     } catch(e) {
       print(e);
+      if (e is GrpcError && e.message == 'invalid-session') {
+        print('Invalid session, removing');
+        await Hive.box('box').clear();
+      }
       Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
     }
   }
