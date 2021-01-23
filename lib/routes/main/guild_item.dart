@@ -16,6 +16,7 @@ class GuildItem extends StatefulWidget {
 }
 
 class _GuildItemState extends State<GuildItem> {
+
   int _guildId;
 
   @override
@@ -47,16 +48,16 @@ class _GuildItemState extends State<GuildItem> {
       color: _isSelected(state) ? Colors.pinkAccent : Colors.transparent,
       child: CircleButton(
         child: avatarWidget,
-        onClick: () async {
+        onClick: () {
           if (!_isSelected(state)) {
-            await state.updateChannels(widget.index);
-            await state.updateMembers(widget.index);
+            state.selectGuild(widget.index);
+            state.updateChannels();
           }
         },
       ));
   }
 
-  bool _isSelected(MainState state) => state.guilds[widget.index].id == state.selectedChannel?.guild;
+  bool _isSelected(MainState state) => state.guilds[widget.index].id == state.selectedGuildId;
 
   Future<void> loadGuildInfo(MainState state) async {
     await state.guilds[widget.index].refresh();

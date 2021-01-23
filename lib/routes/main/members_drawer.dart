@@ -22,6 +22,14 @@ class _MembersState extends State<MembersDrawer> {
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<MainState>(context);
+    if (state.selectedGuildMembers == null) {
+      state.updateMembers();
+      return Drawer(
+        child: Center(
+          child: CircularProgressIndicator()
+        )
+      );
+    }
     List<User> members = state.selectedGuildMembers;
 
     return Drawer(

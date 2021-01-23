@@ -49,12 +49,12 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
       borderRadius: 20, // default 0
 
       leftChild: _guildsDrawer,
-      rightChild: state.selectedChannel == null ? Container() : _membersDrawer,
+      rightChild: state.selectedChannelId == null ? Drawer() : _membersDrawer,
       scaffold: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).backgroundColor,
-          title: Text(state.selectedChannel == null ? "Main!" : state.selectedChannel.name),
+          title: Text(state.selectedChannelId == null ? "Main!" : state.selectedChannel.name),
           leading: GestureDetector(
             onTap: () { _toggleGuilds(); },
             child: Icon(
@@ -72,7 +72,7 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
           ],
         ),
         body: Builder(
-          builder: (builderContext) => state.selectedChannel == null ? placeholder() :
+          builder: (builderContext) => state.selectedChannelId == null ? placeholder() :
           MessageList(state.selectedChannel),
         ),
       )

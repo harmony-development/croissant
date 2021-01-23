@@ -8,11 +8,13 @@ class MainState extends ChangeNotifier {
   List<Channel> _channels;
   List<Channel> get channels => _channels;
 
-  Channel _selectedChannel;
-  Channel get selectedChannel => _selectedChannel;
+  int _selectedChannelId;
+  int get selectedChannelId => _selectedChannelId;
+  Channel get selectedChannel => _channels?.firstWhere((channel) => channel.id == _selectedChannelId, orElse: () => null);
 
-  Guild get selectedGuild => _guilds.firstWhere((guild) => guild.id == _selectedChannel.guild);
-  int get selectedGuildIndex => _guilds.indexWhere((guild) => guild.id == _selectedChannel.guild);
+  int _selectedGuildId;
+  int get selectedGuildId => _selectedGuildId;
+  Guild get selectedGuild => _guilds?.firstWhere((guild) => guild.id == _selectedGuildId, orElse: () => null);
 
   List<User> _selectedGuildMembers;
   List<User> get selectedGuildMembers => _selectedGuildMembers;
@@ -22,20 +24,26 @@ class MainState extends ChangeNotifier {
     notifyListeners();
   });
 
-  Future<void> updateChannels(int index) => _guilds[index].listChannels().then((value) {
+  void selectGuild(int index) {
+    _selectedGuildId = _guilds[index].id;
+    _selectedChannelId = null;
+    _channels = null;
+    notifyListeners();
+  }
+
+  Future<void> updateChannels() => selectedGuild?.listChannels()?.then((value) {
     _channels = value;
-    _selectedChannel = value[0];
     notifyListeners();
   });
 
-  Future<void> updateMembers(int index) => _guilds[index].listMembers().then((value) {
+  void selectChannel(int index) {
+    _selectedChannelId = _channels[index].id;
+    notifyListeners();
+  }
+
+  Future<void> updateMembers() => selectedGuild?.listMembers()?.then((value) {
     _selectedGuildMembers = value;
     notifyListeners();
   });
-
-  void setSelectedChannel(int index) {
-    _selectedChannel = _channels[index];
-    notifyListeners();
-  }
 
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +99,7 @@ class _MessageListState extends State<MessageList> {
       Tuple2 tuple = _channel.streamGuildEvents();
       _controller = tuple.item2;
       _sub = tuple.item1.listen((event) {
-        log(event.toString());
+        print(event.toString());
         if (event is MessageSent) {
           if (event.message.channel == _channel.id) {
             setState(() {
@@ -109,10 +108,9 @@ class _MessageListState extends State<MessageList> {
             });
           }
         }
-      }, onError: (e) => log(e.toString()), onDone: () => log('Done'));
-      log('Test!');
+      }, onError: (e) => print(e), onDone: () => print('Done'));
     } catch(e) {
-      log(e.toString());
+      print(e);
     }
   }
 

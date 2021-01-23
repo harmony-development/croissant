@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:winged_staccato/routes/main/circle_button.dart';
 import 'package:winged_staccato/routes/main/guild_item.dart';
@@ -23,6 +24,7 @@ class GuildsDrawer extends StatelessWidget {
         )
       );
     }
+    Guild guild = state.selectedGuild;
     return Drawer(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,10 +34,25 @@ class GuildsDrawer extends StatelessWidget {
             child: buildGuildList(state, context),
           ),
           Expanded(
-            child: state.channels == null ? Container() : buildChannelList(state, context),
+            child: guild == null ? Container() :
+            Column(
+              children: [
+                Container(
+                  height: 100,
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                  child: Center(
+                    child: guild == null ? Container() :
+                    Text(guild.name == null ? "null" : guild.name),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                ),
+                state.channels == null ? Container() : buildChannelList(state, context)
+              ],
+            )
           ),
-        ],
-      ),
+        ])
     );
   }
 
@@ -64,43 +81,41 @@ class GuildsDrawer extends StatelessWidget {
               );
             },
           )
+        ),
+        Container(
+            height: 64,
+            padding: EdgeInsets.all(8),
+            child: CircleButton(
+              child: Icon(
+                  Icons.exit_to_app
+              ),
+              onClick: () async {
+                await Hive.box('box').clear();
+                Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
+              },
+            )
         )
       ],
     );
   }
 
   Widget buildChannelList(MainState state, BuildContext context) {
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
-    return Column(
-      children: [
-        Container(
-          height: 100,
-          margin: EdgeInsets.only(top: statusBarHeight),
-          child: Center(
-            child: state.selectedChannel == null ? Container() : Text(state.selectedGuild.name),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          itemCount: state.channels == null ? 0 : state.channels.length,
-          itemBuilder: (BuildContext context, int index) {
-            Channel c = state.channels[index];
-            return Ink(
-              color: c.id == state.selectedChannel?.id ? Colors.pinkAccent : Colors.transparent,
-              child: ListTile(
-                title: Text(c.name),
-                onTap: () {
-                  Provider.of<MainState>(context, listen: false).setSelectedChannel(index);
-                },
-              )
-            );
-          }
-        )
-      ]
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      itemCount: state.channels == null ? 0 : state.channels.length,
+      itemBuilder: (BuildContext context, int index) {
+        Channel c = state.channels[index];
+        return Ink(
+          color: c.id == state.selectedChannelId ? Colors.pinkAccent : Colors.transparent,
+          child: ListTile(
+            title: Text(c.name),
+            onTap: () {
+              state.selectChannel(index);
+            },
+          )
+        );
+      }
     );
   }
 
