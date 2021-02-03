@@ -1,4 +1,4 @@
-package com.example.winged_staccato
+package io.harmonyapp.croissant
 
 import io.flutter.embedding.android.FlutterActivity
 
