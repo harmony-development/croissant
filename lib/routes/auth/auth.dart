@@ -27,8 +27,14 @@ class _AuthState extends State<Auth> {
   sdk.AuthStep _step;
 
   @override void dispose() {
-    _sub.cancel();
-    super.dispose();
+    try {
+      _sub.cancel();
+    } catch (e, trace) {
+      print("error disposing AuthState ($_sub): $e");
+      print("the trace: $trace");
+    } finally {
+      super.dispose();
+    }
   }
 
   @override
@@ -49,8 +55,9 @@ class _AuthState extends State<Auth> {
         _sub = sub;
         _step = step;
       });
-    } catch (e) {
-      print(e);
+    } catch (e, trace) {
+      print("exception happened when initting auth: $e");
+      print("its trace: $trace");
     }
   }
 

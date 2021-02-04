@@ -40,10 +40,8 @@ class SplashScreen extends StatelessWidget {
       ), (r) => false);
     } catch(e) {
       print(e);
-      if (e is GrpcError && e.message == 'invalid-session') {
-        print('Invalid session, removing');
-        await Hive.box('box').clear();
-      }
+      print('assuming invalid session; since error handling not updated yet');
+      await Hive.box('box').clear();
       Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
     }
   }
