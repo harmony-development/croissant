@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 
 class InviteDialog extends StatefulWidget {
-  InviteDialog(this.home);
+  InviteDialog(this.client);
 
-  final Homeserver home;
+  final Client client;
   
   @override
   _InviteDialogState createState() => _InviteDialogState();
@@ -12,7 +12,7 @@ class InviteDialog extends StatefulWidget {
 
 class _InviteDialogState extends State<InviteDialog> {
   final inviteLinkController = TextEditingController();
-  bool _isButtonEnabled;
+  late bool _isButtonEnabled;
 
   @override
   void initState() {
@@ -41,41 +41,41 @@ class _InviteDialogState extends State<InviteDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Join guild"),
+      title: const Text("Join guild"),
       content: TextField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Invite Link',
         ),
         controller: inviteLinkController,
       ),
-      actions: <Widget>[
+      actions:[
         FlatButton(
-          child: Text('CANCEL'),
+          child: const Text('CANCEL'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         _isButtonEnabled ? RaisedButton(
-            child: Text('JOIN GUILD'),
+            child: const Text('JOIN GUILD'),
             onPressed: () async {
               setState(() {
                 _isButtonEnabled = false;
               });
               final link = inviteLinkController.text;
-              Server server;
               String inviteId;
+              Client client = widget.client;
               if (link.startsWith('harmony://')) {
                 var cleanLink = link.replaceAll('harmony://', '');
                 var parts = cleanLink.split('/');
-                server = Server(parts[0]);
+                AutoFederateClient server = AutoFederateClient(widget.client.server);
+                client = await server.clientFor(Uri.parse(parts[0]));
                 inviteId = parts[1];
               } else {
-                server = widget.home;
                 inviteId = link;
               }
 
               try {
-                await server.joinGuild(inviteId);
+                await client.JoinGuild(JoinGuildRequest(inviteId: inviteId));
                 Navigator.of(context).pop();
               } catch(e) {
                 setState(() {
@@ -85,8 +85,9 @@ class _InviteDialogState extends State<InviteDialog> {
             }
         ) :
         FlatButton(
-          child: Text('JOIN GUILD'),
+          child: const Text('JOIN GUILD'),
           color: Colors.grey,
+          onPressed: () {},
         )
       ],
     );

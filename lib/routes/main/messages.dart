@@ -1,14 +1,18 @@
 import 'dart:async';
-
-import 'package:tuple/tuple.dart';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
 import 'package:harmony_sdk/harmony_sdk.dart';
-import 'package:winged_staccato/routes/main/message_item.dart';
+import 'package:croissant/routes/main/message_item.dart';
+import 'package:provider/provider.dart';
+import 'state.dart';
+import 'package:fixnum/fixnum.dart';
 
 class MessageList extends StatefulWidget {
-  MessageList(this.channel);
+  const MessageList(this.client, this.channel);
 
-  final Channel channel;
+  final Client client;
+  final ChannelWithId channel;
 
   @override
   _MessageListState createState() => _MessageListState();
@@ -17,24 +21,29 @@ class MessageList extends StatefulWidget {
 class _MessageListState extends State<MessageList> {
   final messageController = TextEditingController();
 
-  Channel _channel;
-  List<Message> _messages;
-  StreamSubscription<GuildEvent> _sub;
-  StreamController _controller;
+  List<MessageWithId> _messages = [];
+  Channel? _channel;
+  StreamSubscription<StreamEventsResponse>? _sub;
+  StreamController? _controller;
 
   @override void dispose() {
-    _sub.cancel();
-    _controller.close();
+    _sub?.cancel();
+    _controller?.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_messages == null || _channel?.id != widget.channel.id) {
-      _channel = widget.channel;
+    MainState state = Provider.of<MainState>(context);
+
+    if (_sub == null) {
       resetEventSubscription();
-      queryMessageList(); // async query message list after build
-      return CircularProgressIndicator();
+      queryMessageList(state.selectedGuildId!); // async query message list after build
+      return Column(children: const [
+        Expanded(child: Center(
+          child: CircularProgressIndicator()
+        ))
+      ]);
     }
 
     return Column(
@@ -44,42 +53,45 @@ class _MessageListState extends State<MessageList> {
             reverse: true,
             itemCount: _messages == null ? 0 : _messages.length,
             itemBuilder: (BuildContext context, int index) {
-              Message message = _messages[index];
+              MessageWithId message = _messages[index];
               if (index + 1 < _messages.length) {
-                Message prevMessage = _messages[index + 1];
-                bool isSameAuthor = prevMessage.author.id == message.author.id;
-                bool isSameOverrideName = prevMessage.override?.name == message.override?.name;
-                bool isSameOverrideAvatar = prevMessage.override?.avatar == message.override?.avatar;
+                MessageWithId prevMessage = _messages[index + 1];
+                bool isSameAuthor = prevMessage.message.authorId == message.message.authorId;
+                bool isSameOverrideName = prevMessage.message.overrides.username == message.message.overrides.username;
+                bool isSameOverrideAvatar = prevMessage.message.overrides.avatar == message.message.overrides.avatar;
                 bool isTotallySamePerson = isSameAuthor && isSameOverrideName && isSameOverrideAvatar;
                 if (isTotallySamePerson) {
                   return InkWell(
                     child: Container(
-                      margin: EdgeInsets.only(left: 72),
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Text(message.content, style: TextStyle(color: Colors.white70),),
+                      margin: const EdgeInsets.only(left: 72),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(message.message.content.textMessage.content.text, style: const TextStyle(color: Colors.white70),),
                     ),
                     onTap: () {},
                   );
                 }
               }
-              return new MessageItem(message);
+              return MessageItem(widget.client, message);
             })
         ),
         Row(
           children: [
             Expanded(child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Message',
                 ),
                 controller: messageController,
               ))),
             IconButton(
-              icon: Icon(Icons.send, color: Colors.white, size: 30.0),
+              icon: const Icon(Icons.send, color: Colors.white, size: 30.0),
               onPressed: () async {
                 try {
-                  await _channel.sendMessage(messageController.text);
+                  await widget.client.SendMessage(SendMessageRequest(
+                    guildId: Int64(state.selectedGuildId!),
+                    channelId: widget.channel.channelId,
+                    content: Content(textMessage: Content_TextContent(content: FormattedText(text: messageController.text)))));
                   messageController.clear();
                 } catch (e) {
                   Scaffold.of(context).showSnackBar(SnackBar(content:  Text("Send: $e")),);
@@ -96,28 +108,50 @@ class _MessageListState extends State<MessageList> {
     try {
       await _sub?.cancel();
       await _controller?.close();
-      Tuple2 tuple = _channel.streamGuildEvents();
-      _controller = tuple.item2;
-      _sub = tuple.item1.listen((event) {
-        print(event.toString());
-        if (event is MessageSent) {
-          if (event.message.channel == _channel.id) {
-            setState(() {
-              _messages = new List.from(_messages)
-                ..insert(0, event.message);
-            });
+      var stream = widget.client.StreamEvents(StreamEventsRequest(
+        // subscribeToGuild: state.currentGuildId,
+      ));
+      setState(() {
+        _sub = stream.listen((event) {
+          print(event.toString());
+          switch (event.whichEvent()) {
+            case sdk.StreamEventsResponse_Event.chat:
+              switch (event.chat.whichEvent()) {
+                case sdk.StreamEvent_Event.sentMessage:
+                  if (event.chat.sentMessage.channelId == widget.channel.channelId) {
+                    setState(() {
+                      _messages = List.from(_messages)
+                        ..insert(0, MessageWithId(message: event.chat.sentMessage.message, messageId: event.chat.sentMessage.messageId));
+                    });
+                  }
+                  break;
+                case sdk.StreamEvent_Event.deletedMessage:
+                  if (event.chat.deletedMessage.channelId == widget.channel.channelId) {
+                    setState(() {
+                      _messages.removeWhere((message) => event.chat.deletedMessage.messageId == message.messageId);
+                    });
+                  }
+                  break;
+                default:
+              }
+              break;
+            default:
           }
-        }
-      }, onError: (e) => print(e), onDone: () => print('Done'));
+        }, onError: (e) => print(e), onDone: () => print('Done'));
+      });
     } catch(e) {
       print(e);
     }
   }
 
-  Future<void> queryMessageList() {
-    return widget.channel.getMessages(null).then((value) => setState(() {
-      _messages = value;
-    }));
+  Future<void> queryMessageList(int guildId) async {
+    var value = await widget.client.GetChannelMessages(GetChannelMessagesRequest(
+      guildId: Int64(guildId),
+      channelId: widget.channel.channelId
+    ));
+    setState(() {
+      _messages = value.messages;
+    });
   }
 
 }

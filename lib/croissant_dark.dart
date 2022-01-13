@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class StaccatoDark {
+class CroissantDark {
   static const MaterialColor background =
       MaterialColor(backgroundPrimary, <int, Color>{
     50: Color(0xFFE4E4E7),

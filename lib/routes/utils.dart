@@ -1,5 +1,3 @@
-import 'package:harmony_sdk/harmony_sdk.dart';
-
 class Utils {
   static const hmcScheme = 'hmc://';
 
@@ -11,11 +9,12 @@ class Utils {
     return 'https://$host/_harmony/media/download/$contentId/';
   }
 
-  static String buildAvatarUrl(Server server,String avatarId) {
-    return 'https://${server.host}:${server.port.toString()}/_harmony/media/download/$avatarId/';
+  static String buildAvatarUrl(Uri server, String avatarId) {
+    return '${server.scheme}://${server.host}:${server.port.toString()}/_harmony/media/download/$avatarId/';
   }
 
-  static String formatDateTime(DateTime date) {
+  static String formatDateTime(int unixtime) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(unixtime*1000);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = DateTime(now.year, now.month, now.day - 1);
@@ -27,12 +26,15 @@ class Utils {
     final month = date.month.toString().padLeft(2, '0');
 
     final checkDate = DateTime(date.year, date.month, date.day);
-    if (checkDate == today)
+    if (checkDate == today) {
       return 'Today at $hours:$minutes';
-    else if (checkDate == yesterday)
+    }
+    else if (checkDate == yesterday) {
       return 'Yesterday at $hours:$minutes';
-    else
+    }
+    else {
       return '$month/$day/${date.year}';
+    }
   }
 
 }

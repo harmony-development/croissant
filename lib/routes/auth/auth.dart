@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
 import 'package:hive/hive.dart';
-import 'package:winged_staccato/routes/auth/choice.dart';
-import 'package:winged_staccato/routes/auth/form.dart';
-import 'package:winged_staccato/routes/auth/waiting.dart';
-import 'package:winged_staccato/routes/hive.dart';
-import 'package:winged_staccato/routes/main/main.dart';
+import 'package:croissant/routes/auth/choice.dart';
+import 'package:croissant/routes/auth/form.dart';
+import 'package:croissant/routes/auth/waiting.dart';
+import 'package:croissant/routes/hive.dart';
+import 'package:croissant/routes/main/main.dart';
 
 class Auth extends StatefulWidget {
 
-  final sdk.Homeserver home;
+  final sdk.Client client;
 
-  Auth({Key key, @required this.home}) : super(key: key);
+  const Auth({Key? key, required this.client}) : super(key: key);
 
   @override
   _AuthState createState() => _AuthState();
@@ -22,13 +22,13 @@ class Auth extends StatefulWidget {
 
 class _AuthState extends State<Auth> {
 
-  String _authId;
-  StreamSubscription<sdk.AuthStep> _sub;
-  sdk.AuthStep _step;
+  String? _authId;
+  StreamSubscription<sdk.StreamStepsResponse>? _sub;
+  sdk.AuthStep? _step;
 
   @override void dispose() {
     try {
-      _sub.cancel();
+      _sub?.cancel();
     } catch (e, trace) {
       print("error disposing AuthState ($_sub): $e");
       print("the trace: $trace");
@@ -44,12 +44,14 @@ class _AuthState extends State<Auth> {
   }
   
   Future<void> initAuth() async {
-    final String authId = await widget.home.beginAuth();
+    final sdk.BeginAuthResponse response = await widget.client.BeginAuth(sdk.BeginAuthRequest());
+    final String authId = response.authId;
     try {
-      StreamSubscription<sdk.AuthStep> sub = widget.home.streamSteps(authId).listen((event) {
-        setState(() => _step = event);
+      StreamSubscription<sdk.StreamStepsResponse> sub = widget.client.StreamSteps(sdk.StreamStepsRequest(authId: authId)).listen((event) {
+        setState(() => _step = event.step);
       });
-      sdk.AuthStep step = await widget.home.getFirstStep(authId);
+      sdk.NextStepResponse firstStep = await widget.client.NextStep(sdk.NextStepRequest(authId: authId));
+      sdk.AuthStep step = firstStep.step;
       setState(() {
         _authId = authId;
         _sub = sub;
@@ -63,35 +65,42 @@ class _AuthState extends State<Auth> {
 
   @override
   Widget build(BuildContext context) {
-    if (_step == null)
+    if (_step == null) {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).backgroundColor,
-          title: Text(
+          title: const Text(
               "Authentication"
           ),
         ),
-        body: Center(
+        body: const Center(
             child: Center(child: CircularProgressIndicator(),)
         ),
       );
+    }
 
-    Widget stepWidget;
-    if (_step is sdk.Choice)
-      stepWidget = ChoiceWidget(home: widget.home, authId: _authId, choice: _step);
-    if (_step is sdk.Form)
-      stepWidget = FormWidget(home: widget.home, authId: _authId, form: _step);
-    if (_step is sdk.Waiting)
-      stepWidget = WaitingWidget(waiting: _step,);
-    if (_step is sdk.SessionStep) {
-      Future.delayed(Duration.zero, () => saveSession((_step as sdk.SessionStep).session)); // execute after build
-      stepWidget = CircularProgressIndicator();
+    Widget? stepWidget;
+    switch (_step?.whichStep()) {
+      case sdk.AuthStep_Step.choice:
+        stepWidget = ChoiceWidget(client: widget.client, authId: _authId!, choice: _step!.choice);
+        break;
+      case sdk.AuthStep_Step.form:
+        stepWidget = FormWidget(client: widget.client, authId: _authId!, form: _step!.form);
+        break;
+      case sdk.AuthStep_Step.waiting:
+        stepWidget = WaitingWidget(waiting: _step!.waiting,);
+        break;
+      case sdk.AuthStep_Step.session:
+        Future.delayed(Duration.zero, () => saveSession(_step!.session)); // execute after build
+        stepWidget = const CircularProgressIndicator();
+        break;
+      default:
     }
 
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(
+        title: const Text(
             "Authentication"
         ),
       ),
@@ -99,11 +108,12 @@ class _AuthState extends State<Auth> {
           child: stepWidget
       ),
     ), onWillPop: () async {
-      if (_step.canGoBack) {
-        await widget.home.stepBack(_authId);
+      if (_step?.canGoBack ?? false) {
+        await widget.client.StepBack(sdk.StepBackRequest(authId: _authId));
         return false;
-      } else
+      } else {
         return true;
+      }
     });
   }
 
@@ -115,12 +125,12 @@ class _AuthState extends State<Auth> {
     if (box.isNotEmpty) {
       await box.clear();
     }
-    final cred = Credentials(widget.home.host, session.token, session.userId);
+    final cred = Credentials(widget.client.server.host, session.sessionToken, session.userId.toInt());
     await box.add(cred);
-    widget.home.session = session;
+    widget.client.setToken(session);
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-      builder: (context) => Main(home: widget.home,),
-    ), (r) => false);
+      builder: (context) => Main(client: widget.client),
+    ), (route) => false);
   }
 
 }

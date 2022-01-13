@@ -1,18 +1,19 @@
 import 'dart:convert';
+import 'package:fixnum/fixnum.dart';
 
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
-import 'package:winged_staccato/routes/auth/form_item.dart';
+import 'package:croissant/routes/auth/form_item.dart';
 
 class FormWidget extends StatelessWidget {
 
-  final sdk.Homeserver home;
+  final sdk.Client client;
   final String authId;
-  final sdk.Form form;
+  final sdk.AuthStep_Form form;
 
-  FormWidget({Key key, @required this.home, @required this.authId, @required this.form}) : super(key: key);
+  FormWidget({Key? key, required this.client, required this.authId, required this.form}) : super(key: key);
 
-  List<FieldController> fieldControllers = new List();
+  List<FieldController> fieldControllers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class FormWidget extends StatelessWidget {
       shrinkWrap: true,
       itemCount: form.fields.length,
       itemBuilder: (BuildContext context, int index) {
-        sdk.FormField field = form.fields[index];
+        sdk.AuthStep_Form_FormField field = form.fields[index];
         final controller = FieldController(field, TextEditingController());
         fieldControllers.add(controller);
         return FormItem(controller: controller,);
@@ -37,24 +38,25 @@ class FormWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 100),
+          padding: const EdgeInsets.symmetric(horizontal: 100),
           child:list,
         ),
         RaisedButton(
           child: Text(
-            "Let's GOOOOOO",
+            "Submit",
             style: Theme.of(context).textTheme.button,
           ),
           onPressed: () {
             var filledFields = fieldControllers.map((c) {
-              if (c.field.type == 'email' || c.field.type == 'text')
-                return sdk.StringField(c.text.text);
-              if (c.field.type == 'password' || c.field.type == 'new-password')
-                return sdk.BytesField(utf8.encode(c.text.text));
-              if (c.field.type == 'number')
-                return sdk.IntField(int.parse(c.text.text));
+              if (c.field.type == 'password' || c.field.type == 'new-password') {
+                return sdk.NextStepRequest_FormFields(bytes: utf8.encode(c.text.text));
+              }
+              if (c.field.type == 'number') {
+                return sdk.NextStepRequest_FormFields(number: Int64(int.parse(c.text.text)));
+              }
+              return sdk.NextStepRequest_FormFields(string: c.text.text);
             }).toList();
-            home.nextStepForm(authId, sdk.FilledForm(filledFields));
+            client.NextStep(sdk.NextStepRequest(authId: authId, form: sdk.NextStepRequest_Form(fields: filledFields)));
           },
           color: Theme.of(context).colorScheme.secondary,
         ),

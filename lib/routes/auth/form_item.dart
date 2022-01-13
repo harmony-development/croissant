@@ -5,18 +5,19 @@ class FormItem extends StatelessWidget {
 
   final FieldController controller;
 
-  FormItem({Key key, @required this.controller}) : super(key: key);
+  const FormItem({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     bool isObscure;
-    if (controller.field.type.contains('password'))
+    if (controller.field.type.contains('password')) {
       isObscure = true;
-    else
+    } else {
       isObscure = false;
+    }
 
     return Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: TextField(
           decoration: InputDecoration(
             hintText: controller.field.name,
@@ -30,7 +31,7 @@ class FormItem extends StatelessWidget {
 }
 
 class FieldController {
-  sdk.FormField field;
+  sdk.AuthStep_Form_FormField field;
   TextEditingController text;
 
   FieldController(this.field, this.text);

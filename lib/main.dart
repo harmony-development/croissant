@@ -3,13 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'routes/auth/auth.dart';
 import 'routes/auth/homeservers.dart';
 import 'routes/auth/onboarding.dart';
-import 'routes/main/main.dart';
 import 'routes/main/state.dart';
 import 'routes/splash.dart';
-import 'staccato_dark.dart';
+import 'croissant_dark.dart';
 
 void main() {
   runApp(
@@ -21,14 +19,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     var theme = ThemeData.dark().copyWith(
-        backgroundColor: StaccatoDark.background,
-        scaffoldBackgroundColor: StaccatoDark.background,
+        backgroundColor: CroissantDark.background,
+        scaffoldBackgroundColor: CroissantDark.background,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        colorScheme: ColorScheme.dark()
+        colorScheme: const ColorScheme.dark()
             .copyWith(primary: Colors.deepPurple, secondary: Colors.pink),
         brightness: Brightness.dark);
     theme = theme.copyWith(
@@ -39,15 +36,15 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     return MaterialApp(
-      title: 'Staccato',
+      title: 'Croissant',
       theme: theme,
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
-        '/main': (context) => Main(),
-        '/onboard': (context) => Onboarding(title: 'Welcome to Staccato'),
+//        '/main': (context) => Main(),
+        '/onboard': (context) => Onboarding(title: 'Welcome to Croissant'),
         '/homeservers': (context) => Homeservers(),
-        '/auth': (context) => Auth(),
+//        '/auth': (context) => Auth(),
       },
     );
   }

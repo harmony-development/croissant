@@ -3,9 +3,9 @@ import 'package:harmony_sdk/harmony_sdk.dart';
 
 class WaitingWidget extends StatelessWidget {
 
-  final Waiting waiting;
+  final AuthStep_Waiting waiting;
 
-  WaitingWidget({Key key, @required this.waiting}) : super(key: key);
+  const WaitingWidget({Key? key, required this.waiting}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

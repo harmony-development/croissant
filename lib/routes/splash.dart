@@ -4,9 +4,10 @@ import 'package:hive/hive.dart';
 
 import 'hive.dart';
 import 'main/main.dart';
+import 'package:fixnum/fixnum.dart';
 
 class SplashScreen extends StatelessWidget {
-  SplashScreen({Key key}) : super(key: key);
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: const [
             CircularProgressIndicator(),
           ],
         ),
@@ -32,12 +33,12 @@ class SplashScreen extends StatelessWidget {
       }
 
       Credentials cred = Hive.box('box').getAt(0);
-      final session = Session(cred.token, cred.userId);
-      final home = Homeserver(cred.host)..session = session;
-      await home.joinedGuilds();
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-        builder: (context) => Main(home: home,),
-      ), (r) => false);
+      final session = Session(sessionToken: cred.token, userId: Int64(cred.userId));
+      final client = AutoFederateClient(Uri.parse(cred.host)).mainClient..setToken(session);
+      await client.GetGuildList(GetGuildListRequest());
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => Main(client: client),
+      ));
     } catch(e) {
       print(e);
       print('assuming invalid session; since error handling not updated yet');

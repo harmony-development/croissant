@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
-import 'package:winged_staccato/routes/main/member_item.dart';
+import 'package:croissant/routes/main/member_item.dart';
 
 import 'state.dart';
 
@@ -11,7 +11,8 @@ class MembersDrawer extends StatefulWidget {
 }
 
 class _MembersState extends State<MembersDrawer> {
-  int _refreshCount;
+  // todo: what is the point of this?
+  late int _refreshCount;
 
   @override
   void initState() {
@@ -24,20 +25,20 @@ class _MembersState extends State<MembersDrawer> {
     final state = Provider.of<MainState>(context);
     if (state.selectedGuildMembers == null) {
       state.updateMembers();
-      return Drawer(
+      return const Drawer(
         child: Center(
           child: CircularProgressIndicator()
         )
       );
     }
-    List<User> members = state.selectedGuildMembers;
+    Map<int,Profile> members = state.selectedGuildMembers;
 
     return Drawer(
       child: ListView(
-        children: <Widget>[
+        children:[
           Container(
             height: 60,
-            child: DrawerHeader(
+            child: const DrawerHeader(
               child: Text('Members'),
               decoration: BoxDecoration(
                 color: Colors.red,
@@ -57,7 +58,8 @@ class _MembersState extends State<MembersDrawer> {
   }
 
   Future<void> getMembers(Guild guild) async {
-    await guild.refresh();
+    // Store guilds globally and refresh the global store here
+    // await guild.refresh();
     setState(() {
       _refreshCount += 1;
     });

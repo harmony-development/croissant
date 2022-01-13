@@ -1,14 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 
 class ChoiceWidget extends StatelessWidget {
 
-  final Homeserver home;
+  final Client client;
   final String authId;
-  final Choice choice;
+  final AuthStep_Choice choice;
 
-  ChoiceWidget({Key key, @required this.home, @required this.authId, @required this.choice}) : super(key: key);
+  const ChoiceWidget({Key? key, required this.client, required this.authId, required this.choice}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class ChoiceWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 100),
+          padding: const EdgeInsets.symmetric(horizontal: 100),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: choice.options.length,
@@ -30,10 +29,10 @@ class ChoiceWidget extends StatelessWidget {
               String option = choice.options[index];
               return ListTile(
                 title: Text(option),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-                trailing: Icon(Icons.arrow_right),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                trailing: const Icon(Icons.arrow_right),
                 onTap: () {
-                  home.nextStepChoice(authId, FilledChoice(choice.options[index]));
+                  client.NextStep(NextStepRequest(authId: authId, choice: NextStepRequest_Choice(choice: choice.options[index])));
                 },
               );
             },

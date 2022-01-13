@@ -10,9 +10,9 @@ import 'messages.dart';
 
 class Main extends StatefulWidget {
 
-  final Homeserver home;
+  final Client client;
 
-  Main({Key key, @required this.home}) : super(key: key);
+  Main({Key? key, required this.client}) : super(key: key);
 
   @override
   _MainWidgetState createState() => _MainWidgetState();
@@ -20,13 +20,12 @@ class Main extends StatefulWidget {
 
 class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
 
-  Widget _guildsDrawer;
-  Widget _membersDrawer;
+  late Widget _guildsDrawer;
+  Widget _membersDrawer = MembersDrawer();
 
   @override
   void initState() {
-    _guildsDrawer = GuildsDrawer(widget.home);
-    _membersDrawer = MembersDrawer();
+    _guildsDrawer = GuildsDrawer(widget.client);
     super.initState();
   }
 
@@ -43,28 +42,28 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
       // colorTransitionChild: Colors.black54,
       colorTransitionScaffold: Colors.black54, // default Color.black54
 
-      offset: IDOffset.only(right: 0.8, left: 0.8),
+      offset: const IDOffset.only(right: 0.8, left: 0.8),
 
       proportionalChildArea : true, // default true
       borderRadius: 20, // default 0
 
       leftChild: _guildsDrawer,
-      rightChild: state.selectedChannelId == null ? Drawer() : _membersDrawer,
+      rightChild: state.selectedChannelId == null ? const Drawer() : _membersDrawer,
       scaffold: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).backgroundColor,
-          title: Text(state.selectedChannelId == null ? "Main!" : state.selectedChannel.name),
+          title: Text(state.selectedChannel?.channel.channelName ?? "Main!"),
           leading: GestureDetector(
             onTap: () { _toggleGuilds(); },
-            child: Icon(
+            child: const Icon(
               Icons.menu,  // add custom icons also
             ),
           ),
           actions: [
             Builder(
               builder: (context) => IconButton(
-                icon: Icon(Icons.people_rounded),
+                icon: const Icon(Icons.people_rounded),
                 onPressed: () => _toggleMembers(),
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               ),
@@ -72,8 +71,8 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
           ],
         ),
         body: Builder(
-          builder: (builderContext) => state.selectedChannelId == null ? placeholder() :
-          MessageList(state.selectedChannel),
+          builder: (builderContext) => state.selectedChannel == null ? placeholder() :
+          MessageList(widget.client, state.selectedChannel!),
         ),
       )
     );
@@ -84,14 +83,14 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
 
   void _toggleGuilds()
   {
-    _innerDrawerKey.currentState.toggle(
+    _innerDrawerKey.currentState?.toggle(
         direction: InnerDrawerDirection.start
     );
   }
 
   void _toggleMembers()
   {
-    _innerDrawerKey.currentState.toggle(
+    _innerDrawerKey.currentState?.toggle(
       direction: InnerDrawerDirection.end
     );
   }
@@ -100,7 +99,7 @@ class _MainWidgetState extends State<Main> with SingleTickerProviderStateMixin {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
+        children: [
           Text(
             'Welcome to the club, buddy!',
             style: Theme.of(context).textTheme.headline4,

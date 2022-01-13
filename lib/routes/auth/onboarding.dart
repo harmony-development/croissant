@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Onboarding extends StatelessWidget {
-  Onboarding({Key key, this.title}) : super(key: key);
+  const Onboarding({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +11,9 @@ class Onboarding extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(image: AssetImage('assets/logo128.png')),
-            SizedBox(height: 20,),
+          children: [
+            const Image(image: AssetImage('assets/logo128.png')),
+            const SizedBox(height: 20,),
             Text(
               'Welcome to Croissant',
               style: Theme.of(context).textTheme.headline4,
