@@ -14,7 +14,7 @@ class Utils {
   }
 
   static String formatDateTime(int unixtime) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(unixtime*1000);
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(unixtime);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = DateTime(now.year, now.month, now.day - 1);
