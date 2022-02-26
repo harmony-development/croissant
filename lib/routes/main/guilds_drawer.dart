@@ -1,6 +1,6 @@
+import 'package:croissant/routes/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:croissant/routes/main/circle_button.dart';
 import 'package:croissant/routes/main/guild_item.dart';
@@ -88,7 +88,7 @@ class GuildsDrawer extends StatelessWidget {
                   Icons.exit_to_app
               ),
               onClick: () async {
-                await Hive.box('box').clear();
+                await PersistentStorage.clear();
                 Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
               },
             )

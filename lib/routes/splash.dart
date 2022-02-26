@@ -1,8 +1,7 @@
+import 'package:croissant/routes/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
-import 'package:hive/hive.dart';
-
-import 'hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'main/main.dart';
 import 'package:fixnum/fixnum.dart';
 
@@ -27,24 +26,24 @@ class SplashScreen extends StatelessWidget {
   }
 
   Future<void> loginWithToken(context) async {
-    try {
-      if (!Hive.isBoxOpen('box')) {
-        await HiveUtils.superInit();
+    final prefs = await PersistentStorage.get();
+
+    if (prefs.hasSession()) {
+      try {
+        final session = Session(sessionToken: prefs.token, userId: prefs.userId);
+        final client = AutoFederateClient(Uri.parse(prefs.host!)).mainClient..setToken(session);
+        await client.GetGuildList(GetGuildListRequest());
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) => Main(client: client),
+        ), (r) => false);
+        return;
+      } catch(e) {
+        print(e);
+        print('assuming invalid session; since error handling not updated yet');
+        await PersistentStorage.clear();
       }
-
-      Credentials cred = Hive.box('box').getAt(0);
-      final session = Session(sessionToken: cred.token, userId: Int64(cred.userId));
-      final client = AutoFederateClient(Uri.parse(cred.host)).mainClient..setToken(session);
-      await client.GetGuildList(GetGuildListRequest());
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Main(client: client),
-      ));
-    } catch(e) {
-      print(e);
-      print('assuming invalid session; since error handling not updated yet');
-      await Hive.box('box').clear();
-      Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
     }
-  }
 
+    Navigator.pushNamedAndRemoveUntil(context, '/onboard', (r) => false);
+  }
 }

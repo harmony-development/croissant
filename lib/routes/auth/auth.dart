@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'package:croissant/routes/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
-import 'package:hive/hive.dart';
 import 'package:croissant/routes/auth/choice.dart';
 import 'package:croissant/routes/auth/form.dart';
 import 'package:croissant/routes/auth/waiting.dart';
-import 'package:croissant/routes/hive.dart';
 import 'package:croissant/routes/main/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth extends StatefulWidget {
 
@@ -118,15 +118,12 @@ class _AuthState extends State<Auth> {
   }
 
   Future<void> saveSession(sdk.Session session) async {
-    if (!Hive.isBoxOpen('box')) {
-      await HiveUtils.superInit();
-    }
-    final box = Hive.box('box');
-    if (box.isNotEmpty) {
-      await box.clear();
-    }
-    final cred = Credentials(widget.client.server.host, session.sessionToken, session.userId.toInt());
-    await box.add(cred);
+    var storage = PersistentStorage();
+    storage.host = widget.client.server.toString();
+    storage.token = session.sessionToken;
+    storage.userId = session.userId;
+    await storage.save();
+
     widget.client.setToken(session);
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
       builder: (context) => Main(client: widget.client),
