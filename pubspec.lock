@@ -126,9 +126,11 @@ packages:
   harmony_sdk:
     dependency: "direct main"
     description:
-      path: "../harmony-dart-sdk"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: d55c940ac7d15d51e3912ecac58b8434eab59430
+      url: "https://github.com/harmony-development/harmony-dart-sdk"
+    source: git
     version: "0.0.8"
   http:
     dependency: transitive
@@ -408,13 +410,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
-  web_socket_channel:
-    dependency: transitive
-    description:
-      name: web_socket_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0"
   win32:
     dependency: transitive
     description:

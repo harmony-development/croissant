@@ -15,7 +15,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   harmony_sdk:
-    path: ../harmony-dart-sdk/
+    git: https://github.com/harmony-development/harmony-dart-sdk
   google_fonts: ^2.2.0
   provider: ^6.0.2
   flutter_inner_drawer:

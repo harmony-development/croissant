@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -21,13 +21,28 @@ jobs:
     - run: flutter build apk --split-per-abi
     - uses: actions/upload-artifact@v2
       with:
-        name: winged-staccato-arm64-v8a-release.apk
+        name: croissant-arm64-v8a-release.apk
         path: build/app/outputs/apk/release/app-arm64-v8a-release.apk
     - uses: actions/upload-artifact@v2
       with:
-        name: winged-staccato-armeabi-v7a-release.apk
+        name: croissant-armeabi-v7a-release.apk
         path: build/app/outputs/apk/release/app-armeabi-v7a-release.apk
     - uses: actions/upload-artifact@v2
       with:
-        name: winged-staccato-x86_64-release.apk
+        name: croissant-x86_64-release.apk
         path: build/app/outputs/apk/release/app-x86_64-release.apk
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: 'stable' # or: 'dev' or 'beta'
+    - run: flutter pub get
+    - run: flutter build web --release
+    - name: create tarball
+      run: tar cvf web-build.tar.gz build/web
+    - uses: actions/upload-artifact@v2
+      with:
+        name: croissant-web-release.tar.gz
+        path: web-build.tar.gz
