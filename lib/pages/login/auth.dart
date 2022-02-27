@@ -1,13 +1,15 @@
 import 'dart:async';
-
-import 'package:croissant/routes/utils.dart';
+import 'package:croissant/pages/login/widgets/form.dart';
+import 'package:croissant/pages/home/home.dart';
+import 'package:croissant/state.dart';
 import 'package:flutter/material.dart';
+
+import 'package:croissant/pages/login/widgets/choice.dart';
+import 'package:croissant/pages/login/widgets/waiting.dart';
+
+import 'package:croissant/utils/persistent_storage.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
-import 'package:croissant/routes/auth/choice.dart';
-import 'package:croissant/routes/auth/form.dart';
-import 'package:croissant/routes/auth/waiting.dart';
-import 'package:croissant/routes/main/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class Auth extends StatefulWidget {
 
@@ -125,9 +127,13 @@ class _AuthState extends State<Auth> {
     await storage.save();
 
     widget.client.setToken(session);
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-      builder: (context) => Main(client: widget.client),
-    ), (route) => false);
+    Provider.of<CState>(context, listen: false).client = widget.client;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const MainPage()),
+      (route) => false
+    );
   }
 
 }

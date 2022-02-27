@@ -1,3 +1,4 @@
+import 'package:croissant/pages/login/homeservers.dart';
 import 'package:flutter/material.dart';
 
 class Onboarding extends StatelessWidget {
@@ -25,15 +26,17 @@ class Onboarding extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Container(),
-            RaisedButton(
+            ElevatedButton(
               child: Text(
                 "Yum",
                 style: Theme.of(context).textTheme.button,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/homeservers');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Homeservers()));
               },
-              color: Theme.of(context).colorScheme.secondary,
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+              ),
             ),
           ],
         ),

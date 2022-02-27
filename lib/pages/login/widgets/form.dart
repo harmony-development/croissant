@@ -3,7 +3,7 @@ import 'package:fixnum/fixnum.dart';
 
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart' as sdk;
-import 'package:croissant/routes/auth/form_item.dart';
+import 'package:croissant/pages/login/widgets/form_item.dart';
 
 class FormWidget extends StatelessWidget {
 

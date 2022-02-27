@@ -1,51 +1,87 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
-import 'routes/auth/homeservers.dart';
-import 'routes/auth/onboarding.dart';
-import 'routes/main/state.dart';
-import 'routes/splash.dart';
-import 'croissant_dark.dart';
+import 'package:croissant/pages/home/home.dart';
+import 'package:croissant/pages/onboarding.dart';
+import 'package:croissant/utils/persistent_storage.dart';
+import 'package:croissant/state.dart';
+import 'package:harmony_sdk/harmony_sdk.dart';
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MainState(),
-      child: MyApp(),
-    ),
-  );
-}
+import 'theme/croissant_dark.dart';
+
+void main() => runApp(ChangeNotifierProvider(
+      create: (context) => CState(),
+      child: const MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    var theme = ThemeData.dark().copyWith(
-        backgroundColor: CroissantDark.background,
-        scaffoldBackgroundColor: CroissantDark.background,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        colorScheme: const ColorScheme.dark()
-            .copyWith(primary: Colors.deepPurple, secondary: Colors.pink),
-        brightness: Brightness.dark);
-    theme = theme.copyWith(
-        textTheme: GoogleFonts.manropeTextTheme(theme.textTheme),
-        accentTextTheme: GoogleFonts.manropeTextTheme(theme.accentTextTheme),
-        primaryTextTheme: GoogleFonts.manropeTextTheme(theme.primaryTextTheme));
+    var theme = CroissantDark.theme();
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     return MaterialApp(
       title: 'Croissant',
       theme: theme,
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),
-//        '/main': (context) => Main(),
-        '/onboard': (context) => Onboarding(title: 'Welcome to Croissant'),
-        '/homeservers': (context) => Homeservers(),
-//        '/auth': (context) => Auth(),
+        '/': (context) => const SplashScreen(),
       },
     );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    loginWithToken(context); // scheduled to execute after build
+
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> loginWithToken(context) async {
+    final prefs = await PersistentStorage.get();
+
+    if (prefs.hasSession()) {
+      try {
+        final session =
+            Session(sessionToken: prefs.token, userId: prefs.userId);
+        final client = AutoFederateClient(Uri.parse(prefs.host!)).mainClient
+          ..setToken(session);
+        await client.GetGuildList(GetGuildListRequest());
+        Provider.of<CState>(context, listen: false).client = client;
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+            (r) => false);
+        return;
+      } catch (e) {
+        print(e);
+        print('assuming invalid session; since error handling not updated yet');
+        await PersistentStorage.clear();
+      }
+    }
+
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Onboarding()),
+        (r) => false);
   }
 }

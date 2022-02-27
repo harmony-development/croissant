@@ -1,18 +1,12 @@
-import 'dart:ffi';
-
-import 'package:croissant/routes/main/main.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'auth.dart';
-import 'package:fixnum/fixnum.dart';
 
-class Homeservers extends StatefulWidget {
-  @override
-  _HomeserversState createState() => _HomeserversState();
-}
+class Homeservers extends StatelessWidget {
+  Homeservers({Key? key}) : super(key: key);
 
-class _HomeserversState extends State<Homeservers> {
-  final serverController = TextEditingController(text: "https://chat.harmonyapp.io:2289");
+  final serverController = TextEditingController(text: "http://192.168.0.121:2289");
+  // final serverController = TextEditingController(text: "https://chat.harmonyapp.io:2289");
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +34,7 @@ class _HomeserversState extends State<Homeservers> {
                   controller: serverController,
                 ),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: const Text("Select"),
                 onPressed: () {
                     Navigator.push(context,
@@ -50,7 +44,9 @@ class _HomeserversState extends State<Homeservers> {
                     )
                   );
                 },
-                color: Theme.of(context).colorScheme.secondary,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                ),
               )
             ],
           ),
