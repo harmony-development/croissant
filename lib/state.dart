@@ -13,10 +13,6 @@ class CState with ChangeNotifier {
 
   late Client _client;
   Client get client => _client;
-  set client(c) {
-    _client = c;
-    initialize();
-  }
 
   Int64? _selectedGuildId;
   Int64? get selectedGuildId => _selectedGuildId;
@@ -34,6 +30,9 @@ class CState with ChangeNotifier {
     notifyListeners();
   }
 
+  late Profile _ownProfile;
+  Profile get ownProfile => _ownProfile;
+
   final Map<Int64,Guild> _guilds = {};
   Map<Int64,Guild> get guilds => _guilds;
 
@@ -43,7 +42,13 @@ class CState with ChangeNotifier {
   final Map<Int64?, Int64?> _lastSelectedChannel = {};
   Map<Int64?, Int64?> get lastSelectedChannel => _lastSelectedChannel;
 
-  Future<void> initialize() async {
+
+  Future<void> initialize(Client c, Int64 userId) async {
+    _client = c;
+
+    var profile = await client.GetProfile(GetProfileRequest(userId: [userId]));
+    _ownProfile = profile.profile.values.first;
+
     var guildList = await client.GetGuildList(GetGuildListRequest());
     var guild = await client.GetGuild(GetGuildRequest(guildIds: [...guildList.guilds.map((x) => x.guildId)]));
     for (var g in guildList.guilds) {

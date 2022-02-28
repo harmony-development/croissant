@@ -13,9 +13,9 @@ class PersistentStorage {
 
     inst.host = prefs.getString("host");
     inst.token = prefs.getString("token");
-    var userId = prefs.getInt("userId");
+    var userId = prefs.getString("userId");
     if (userId != null) {
-      inst.userId = Int64(userId);
+      inst.userId = Int64.parseInt(userId);
     }
 
     return inst;
@@ -29,7 +29,7 @@ class PersistentStorage {
     final prefs = await SharedPreferences.getInstance();
     if (host != null) prefs.setString("host", host!);
     if (token != null) prefs.setString("token", token!);
-    if (userId != null) prefs.setInt("userId", userId!.toInt());
+    if (userId != null) prefs.setString("userId", userId!.toString());
   }
 
   static clear() async {

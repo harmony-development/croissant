@@ -5,8 +5,7 @@ import 'auth.dart';
 class Homeservers extends StatelessWidget {
   Homeservers({Key? key}) : super(key: key);
 
-  final serverController = TextEditingController(text: "http://192.168.0.121:2289");
-  // final serverController = TextEditingController(text: "https://chat.harmonyapp.io:2289");
+  final serverController = TextEditingController(text: "https://chat.harmonyapp.io:2289");
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@
 import 'package:croissant/state.dart';
 import 'package:croissant/theme/croissant_dark.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -12,7 +11,27 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var page = Column(children: [
       AppBar(title: const Text("Settings")),
-      const Text("test"),
+      Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Text("Logged in as "),
+                Text(
+                  Provider.of<CState>(context).ownProfile.userName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Text("@"),
+                Text(
+                  Provider.of<CState>(context).client.server.host,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        )
+      ),
     ]);
 
     if (!Provider.of<CState>(context).isWideScreen) {

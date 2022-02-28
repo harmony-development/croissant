@@ -13,7 +13,7 @@ class FormWidget extends StatelessWidget {
 
   FormWidget({Key? key, required this.client, required this.authId, required this.form}) : super(key: key);
 
-  List<FieldController> fieldControllers = [];
+  final List<FieldController> fieldControllers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class FormWidget extends StatelessWidget {
         sdk.AuthStep_Form_FormField field = form.fields[index];
         final controller = FieldController(field, TextEditingController());
         fieldControllers.add(controller);
-        return FormItem(controller: controller,);
+        return FormItem(controller: controller);
       },
     );
 
@@ -62,5 +62,4 @@ class FormWidget extends StatelessWidget {
         ),
     ],);
   }
-
 }

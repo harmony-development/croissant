@@ -127,7 +127,7 @@ class _AuthState extends State<Auth> {
     await storage.save();
 
     widget.client.setToken(session);
-    Provider.of<CState>(context, listen: false).client = widget.client;
+    await Provider.of<CState>(context, listen: false).initialize(widget.client, session.userId);
 
     Navigator.pushAndRemoveUntil(
       context,

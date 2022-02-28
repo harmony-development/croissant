@@ -66,14 +66,16 @@ class SplashScreen extends StatelessWidget {
         final client = AutoFederateClient(Uri.parse(prefs.host!)).mainClient
           ..setToken(session);
         await client.GetGuildList(GetGuildListRequest());
-        Provider.of<CState>(context, listen: false).client = client;
+        await Provider.of<CState>(context, listen: false).initialize(client, prefs.userId!);
         Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const MainPage()),
-            (r) => false);
+          context,
+          MaterialPageRoute(builder: (context) => const MainPage()),
+          (r) => false
+        );
         return;
-      } catch (e) {
+      } catch (e, trace) {
         print(e);
+        print(trace);
         print('assuming invalid session; since error handling not updated yet');
         await PersistentStorage.clear();
       }
