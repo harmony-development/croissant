@@ -34,7 +34,7 @@ class Utils {
       return 'Yesterday at $hours:$minutes';
     }
     else {
-      return '$month/$day/${date.year}';
+      return '$month/$day/${date.year} $hours:$minutes';
     }
   }
 

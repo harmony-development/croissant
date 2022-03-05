@@ -41,7 +41,7 @@ class FormWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 100),
           child:list,
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text(
             "Submit",
             style: Theme.of(context).textTheme.button,
@@ -58,7 +58,9 @@ class FormWidget extends StatelessWidget {
             }).toList();
             client.NextStep(sdk.NextStepRequest(authId: authId, form: sdk.NextStepRequest_Form(fields: filledFields)));
           },
-          color: Theme.of(context).colorScheme.secondary,
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).colorScheme.secondary,
+          ),
         ),
     ],);
   }

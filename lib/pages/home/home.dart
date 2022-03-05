@@ -1,5 +1,6 @@
 import 'package:croissant/pages/home/widgets/channel_list.dart';
 import 'package:croissant/pages/home/widgets/guild_list.dart';
+import 'package:croissant/pages/home/widgets/messages_view.dart';
 import 'package:croissant/state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,13 +38,14 @@ class MainPage extends StatelessWidget {
             child: Column(
               children: [
                 AppBar(
-                    title: selectedChannelId == null
-                        ? const Text("Hello!")
-                        : Text(state
-                            .channels[state.selectedGuildId]![
-                                selectedChannelId]!
-                            .channelName)),
-                const Center(child: Text("large screen")),
+                  title: selectedChannelId == null
+                    ? const Text("Hello!")
+                    : Text(state.channels
+                      [state.selectedGuildId]!
+                      [selectedChannelId]!
+                      .channelName)
+                ),
+                const MessagesView(),
               ],
             ),
           )
@@ -64,11 +66,7 @@ class MainPage extends StatelessWidget {
               ? const Text("Hello!")
               : Text(state.channels[state.selectedGuildId]![selectedChannelId]!
                   .channelName)),
-      body: Column(
-        children: const [
-          Center(child: Text("small screen")),
-        ],
-      ),
+      body: const MessagesView(),
       drawer: Drawer(
           child: Row(
         children: const [
