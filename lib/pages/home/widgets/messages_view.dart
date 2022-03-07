@@ -1,6 +1,5 @@
 import 'package:croissant/pages/home/widgets/message_item.dart';
 import 'package:croissant/state.dart';
-import 'package:croissant/utils/harmony_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,7 @@ class MessagesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     var state = Provider.of<CState>(context);
     if (state.selectedChannelId != null) {
       state.loadChannelMessages(0);
@@ -20,47 +20,51 @@ class MessagesView extends StatelessWidget {
 
     messages.sort();
 
-    return Expanded(child:
-      Column(
-        children: [
-          Expanded(child:
-            ListView(
-              children: messages.reversed.map<Widget>((x) {
-                MessageWithId message = MessageWithId(messageId: x, message: state.messages[x]!);
+    return Column(
+      children: [
+        Expanded(child:
+          Column(
+            children: [
+              Expanded(child:
+                ListView(
+                  children: messages.reversed.map<Widget>((x) {
+                    MessageWithId message = MessageWithId(messageId: x, message: state.messages[x]!);
 
-                if (messages.indexOf(x) > 0) {
-                  Message prevMessage = state.messages[messages[messages.indexOf(x)-1]]!;
+                    if (messages.indexOf(x) > 0) {
+                      Message prevMessage = state.messages[messages[messages.indexOf(x)-1]]!;
 
-                  bool isExpired = (prevMessage.createdAt + 7 * 60 * 1000) < message.message.createdAt;
+                      bool isExpired = (prevMessage.createdAt + 7 * 60 * 1000) < message.message.createdAt;
 
-                  bool isSameAuthor = prevMessage.authorId == message.message.authorId;
-                  bool isSameOverrideName = prevMessage.overrides.username == message.message.overrides.username;
-                  bool isSameOverrideAvatar = prevMessage.overrides.avatar == message.message.overrides.avatar;
+                      bool isSameAuthor = prevMessage.authorId == message.message.authorId;
+                      bool isSameOverrideName = prevMessage.overrides.username == message.message.overrides.username;
+                      bool isSameOverrideAvatar = prevMessage.overrides.avatar == message.message.overrides.avatar;
 
-                  bool isTotallySamePerson = isSameAuthor && isSameOverrideName && isSameOverrideAvatar && !isExpired;
+                      bool isTotallySamePerson = isSameAuthor && isSameOverrideName && isSameOverrideAvatar && !isExpired;
 
-                  if (isTotallySamePerson) {
-                    return InkWell(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 72),
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(message.message.content.text, style: const TextStyle(color: Colors.white70),),
-                      ),
-                      onTap: () {},
-                    );
-                  }
-                }
-                return MessageItem(message: message);
-              }).toList(),
-              reverse: true,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: buildMessageBox(context, state),
-          ),
-        ]
-      )
+                      if (isTotallySamePerson) {
+                        return InkWell(
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 72),
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(message.message.content.text, style: const TextStyle(color: Colors.white70),),
+                          ),
+                          onTap: () {},
+                        );
+                      }
+                    }
+                    return MessageItem(message: message);
+                  }).toList(),
+                  reverse: true,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: buildMessageBox(context, state),
+              ),
+            ]
+          )
+        ),
+      ],
     );
   }
 

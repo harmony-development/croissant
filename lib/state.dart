@@ -5,12 +5,7 @@ import 'package:harmony_sdk/harmony_sdk.dart';
 import 'package:fixnum/fixnum.dart';
 
 class CState with ChangeNotifier {
-  bool _isWideScreen = false;
-  bool get isWideScreen => _isWideScreen;
-  set isWideScreen(bool value) {
-    _isWideScreen = value;
-    notifyListeners();
-  }
+  bool isWideScreen = false;
 
   late Client _client;
   Client get client => _client;
@@ -84,11 +79,10 @@ class CState with ChangeNotifier {
 
       for (var msg in res.messages) {
         _channelMessages[selectedChannelId]!.add(msg.messageId);
-        messages[msg.messageId] = msg.message;
+        _messages[msg.messageId] = msg.message;
       }
-    }
-
     notifyListeners();
+    }
   }
 
   Future<void> initialize(Client c, Int64 userId) async {
@@ -111,7 +105,7 @@ class CState with ChangeNotifier {
 
       // todo: fetch all guild member profiles
 
-      guilds[g.guildId] = guild.guild[g.guildId]!;
+      _guilds[g.guildId] = guild.guild[g.guildId]!;
     }
 
     _stream.init();
