@@ -1,3 +1,5 @@
+import 'package:croissant/components/popup_widget.dart';
+import 'package:croissant/pages/add_guild.dart';
 import 'package:croissant/pages/settings/settings.dart';
 import 'package:croissant/state.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +61,9 @@ class GuildList extends StatelessWidget {
             child: JustTheTooltip(
               child: InkWell(
                 child: const Icon(Icons.add),
-                onTap: () { },
+                onTap: () {
+                  showDialog(context: context, builder: (context) => const PopupWidget(inner: AddGuildPage()));
+                },
               ),
               content: const Padding(
                 padding: EdgeInsets.all(4),
@@ -77,11 +81,7 @@ class GuildList extends StatelessWidget {
               child: InkWell(
                 child: const Icon(Icons.person),
                 onTap: () {
-                  if (state.isWideScreen) {
-                    showDialog(context: context, builder: (context) => const SettingsPage());
-                  } else {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-                  }
+                  showDialog(context: context, builder: (context) => const PopupWidget(inner: SettingsPage()));
                 },
               ),
               content: const Padding(
