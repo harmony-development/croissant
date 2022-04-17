@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
       title: 'Croissant',
       theme: theme,
       initialRoute: '/',
+      debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => const SplashScreen(),
       },
