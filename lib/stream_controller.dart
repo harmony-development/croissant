@@ -150,9 +150,9 @@ class StreamController {
       case StreamEvent_Event.messageUnpinned:
         // TODO: Handle this case.
         break;
-      case StreamEvent_Event.reactionUpdated:
+      // case StreamEvent_Event.reactionUpdated:
         // TODO: Handle this case.
-        break;
+        // break;
       case StreamEvent_Event.ownerAdded:
         // TODO: Handle this case.
         break;
@@ -176,6 +176,30 @@ class StreamController {
         break;
       case StreamEvent_Event.notSet:
         // this should never happen
+        break;
+      case StreamEvent_Event.newReactionAdded:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.reactionAdded:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.reactionRemoved:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.privateChannelDeleted:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.privateChannelAddedToList:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.privateChannelRemovedFromList:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.userJoinedPrivateChannel:
+        // TODO: Handle this case.
+        break;
+      case StreamEvent_Event.userLeftPrivateChannel:
+        // TODO: Handle this case.
         break;
       }
     }
@@ -206,6 +230,9 @@ class StreamController {
         var profile = await state.client.GetProfile(GetProfileRequest(userId: [event.profileUpdated.userId]));
         state.profiles[profile.profile.keys.first] = profile.profile.values.first;
         state.notifyListeners();
+        break;
+      case profile.StreamEvent_Event.statusUpdated:
+        // TODO: Handle this case.
         break;
       case profile.StreamEvent_Event.notSet:
         // this should never happen
